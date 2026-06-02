@@ -1,0 +1,29 @@
+# Dependencies
+node_modules/
+.expo/
+
+# Build outputs
+dist/
+build/
+
+# Environment
+.env
+*.env.local
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Uploads (local dev)
+uploads/
+
+# TypeScript
+*.tsbuildinfo
