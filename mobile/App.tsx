@@ -5,7 +5,15 @@ import { store } from './src/store';
 import { AppNavigator } from './src/navigation/AppNavigator';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import * as Notifications from 'expo-notifications';
-import { Platform } from 'react-native';
+import { Platform, LogBox } from 'react-native';
+import Constants, { ExecutionEnvironment } from 'expo-constants';
+
+// Mute any notification warnings
+LogBox.ignoreLogs([
+  'expo-notifications: Android Push notifications',
+  'Remote notifications are not supported in Expo Go',
+  'Support for Android Push Notifications',
+]);
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -16,17 +24,31 @@ const queryClient = new QueryClient({
   },
 });
 
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: true,
-  }),
-});
+const isExpoGo = Constants.executionEnvironment === ExecutionEnvironment.StoreClient;
+
+// Register notification handler statically but conditional on runtime isExpoGo
+if (!isExpoGo) {
+  Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowAlert: true,
+      shouldPlaySound: true,
+      shouldSetBadge: true,
+      shouldShowBanner: true,
+      shouldShowList: true,
+    }),
+  });
+}
 
 export default function App() {
   useEffect(() => {
-    registerForPushNotifications();
+    if (!isExpoGo) {
+      registerForPushNotifications();
+    } else {
+      console.log(
+        'Android remote push notifications are disabled in the Expo Go Client. ' +
+        'Bypassing push token registration for local Expo Go testing.'
+      );
+    }
   }, []);
 
   const registerForPushNotifications = async () => {
@@ -50,9 +72,17 @@ export default function App() {
 
       if (finalStatus !== 'granted') return;
 
-      const token = await Notifications.getExpoPushTokenAsync();
+      const projectId =
+        Constants.expoConfig?.extra?.eas?.projectId ??
+        Constants.easConfig?.projectId;
+
+      if (!projectId) {
+        console.warn('EAS Project ID not found. Notification tokens will bypass in local development.');
+        return;
+      }
+
+      const token = await Notifications.getExpoPushTokenAsync({ projectId });
       console.log('Push token:', token.data);
-      // Save token to backend via userApi.updateProfile({ pushToken: token.data })
     } catch (error) {
       console.log('Push notification setup error:', error);
     }

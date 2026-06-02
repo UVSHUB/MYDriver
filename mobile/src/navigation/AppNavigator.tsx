@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../store';
 import { Text, View } from 'react-native';
 import { COLORS, FONT_SIZES } from '../constants';
+import { Ionicons } from '@expo/vector-icons';
 
 // Auth Screens
 import SplashScreen from '../screens/auth/SplashScreen';
@@ -97,13 +98,18 @@ const ProfileNavigator = () => (
 
 // ─── Tab Icon ───────────────────────────────────────────────────
 
-const TabIcon = ({ emoji, label, focused }: { emoji: string; label: string; focused: boolean }) => (
-  <View style={{ alignItems: 'center', gap: 2 }}>
-    <Text style={{ fontSize: 22, opacity: focused ? 1 : 0.5 }}>{emoji}</Text>
+const TabIcon = ({ iconName, label, focused }: { iconName: keyof typeof Ionicons.glyphMap; label: string; focused: boolean }) => (
+  <View style={{ alignItems: 'center', gap: 4 }}>
+    <Ionicons
+      name={focused ? iconName : (`${iconName}-outline` as any)}
+      size={22}
+      color={focused ? COLORS.primary : COLORS.textMuted}
+    />
     <Text style={{
       fontSize: 10,
       fontWeight: focused ? '700' : '500',
       color: focused ? COLORS.primary : COLORS.textMuted,
+      letterSpacing: -0.1,
     }}>{label}</Text>
   </View>
 );
@@ -128,22 +134,22 @@ const MainNavigator = () => (
     <MainTab.Screen
       name="Home"
       component={HomeScreen}
-      options={{ tabBarIcon: ({ focused }) => <TabIcon emoji="🏠" label="Home" focused={focused} /> }}
+      options={{ tabBarIcon: ({ focused }) => <TabIcon iconName="home" label="Home" focused={focused} /> }}
     />
     <MainTab.Screen
       name="BookingFlow"
       component={BookingFlowNavigator}
-      options={{ tabBarIcon: ({ focused }) => <TabIcon emoji="🚗" label="Book" focused={focused} /> }}
+      options={{ tabBarIcon: ({ focused }) => <TabIcon iconName="car" label="Ride" focused={focused} /> }}
     />
     <MainTab.Screen
       name="Wallet"
       component={WalletScreen}
-      options={{ tabBarIcon: ({ focused }) => <TabIcon emoji="💳" label="Wallet" focused={focused} /> }}
+      options={{ tabBarIcon: ({ focused }) => <TabIcon iconName="wallet" label="Wallet" focused={focused} /> }}
     />
     <MainTab.Screen
       name="Profile"
       component={ProfileNavigator}
-      options={{ tabBarIcon: ({ focused }) => <TabIcon emoji="👤" label="Profile" focused={focused} /> }}
+      options={{ tabBarIcon: ({ focused }) => <TabIcon iconName="person" label="Account" focused={focused} /> }}
     />
   </MainTab.Navigator>
 );

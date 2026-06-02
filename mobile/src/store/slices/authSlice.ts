@@ -42,6 +42,23 @@ export const registerUser = createAsyncThunk(
   }
 );
 
+export const loginWithGoogle = createAsyncThunk(
+  'auth/loginWithGoogle',
+  async (userData: { email: string; fullName: string; avatar: string }, { rejectWithValue }) => {
+    try {
+      const data = await authApi.googleLogin(userData);
+      await AsyncStorage.multiSet([
+        [STORAGE_KEYS.ACCESS_TOKEN, data.accessToken],
+        [STORAGE_KEYS.REFRESH_TOKEN, data.refreshToken],
+        [STORAGE_KEYS.USER, JSON.stringify(data.user)],
+      ]);
+      return data;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Google Sign-In failed');
+    }
+  }
+);
+
 export const verifyOTP = createAsyncThunk(
   'auth/verifyOTP',
   async (data: { userId: string; otp: string }, { rejectWithValue }) => {
@@ -117,6 +134,18 @@ const authSlice = createSlice({
       .addCase(registerUser.pending, (state) => { state.isLoading = true; })
       .addCase(registerUser.fulfilled, (state) => { state.isLoading = false; })
       .addCase(registerUser.rejected, (state) => { state.isLoading = false; });
+
+    // Google Login
+    builder
+      .addCase(loginWithGoogle.pending, (state) => { state.isLoading = true; })
+      .addCase(loginWithGoogle.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.user = action.payload.user;
+        state.accessToken = action.payload.accessToken;
+        state.refreshToken = action.payload.refreshToken;
+        state.isAuthenticated = true;
+      })
+      .addCase(loginWithGoogle.rejected, (state) => { state.isLoading = false; });
 
     // Verify OTP
     builder

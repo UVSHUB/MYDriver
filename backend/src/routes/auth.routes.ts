@@ -9,6 +9,7 @@ import {
   forgotPassword,
   resetPassword,
   refreshToken,
+  googleLogin,
 } from '../controllers/auth.controller';
 
 const router = Router();
@@ -22,5 +23,7 @@ router.post('/login/phone/verify', verifyPhoneLogin);
 router.post('/forgot-password', forgotPassword);
 router.post('/reset-password', resetPassword);
 router.post('/refresh-token', refreshToken);
+router.post('/google', googleLogin);
 
 export default router;
+

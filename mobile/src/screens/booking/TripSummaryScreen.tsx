@@ -9,10 +9,11 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
+import { Ionicons } from '@expo/vector-icons';
 import { RootState, AppDispatch } from '../../store';
-import { setActiveBooking, clearBooking } from '../../store/slices/bookingSlice';
+import { setActiveBooking } from '../../store/slices/bookingSlice';
 import { bookingApi } from '../../api';
-import { SERVICE_TYPES, COLORS, FONT_SIZES, SPACING, BORDER_RADIUS, SHADOWS } from '../../constants';
+import { SERVICE_TYPES, COLORS, FONT_SIZES, SPACING, BORDER_RADIUS } from '../../constants';
 
 export default function TripSummaryScreen({ navigation, route }: any) {
   const { serviceType, pickupLocation, dropLocation, vehicleId, estimatedDistance, estimatedDuration } = route.params;
@@ -52,26 +53,26 @@ export default function TripSummaryScreen({ navigation, route }: any) {
   };
 
   const PAYMENT_METHODS = [
-    { id: 'wallet' as const, label: 'Wallet', icon: '💳', desc: 'Pay from your wallet balance' },
-    { id: 'payhere' as const, label: 'PayHere', icon: '🏦', desc: 'Pay with PayHere (Sri Lanka)' },
+    { id: 'wallet' as const, label: 'Wallet Balance', iconName: 'card-outline' as const, desc: 'Deduct directly from your wallet' },
+    { id: 'payhere' as const, label: 'PayHere (Sri Lanka)', iconName: 'business-outline' as const, desc: 'Pay via Card/Mobile wallet' },
   ];
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Text style={styles.backIcon}>←</Text>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton} activeOpacity={0.8}>
+          <Ionicons name="arrow-back" size={22} color={COLORS.white} />
         </TouchableOpacity>
         <Text style={styles.title}>Trip Summary</Text>
-        <View style={{ width: 40 }} />
+        <View style={{ width: 44 }} />
       </View>
 
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         {/* Service */}
         {service && (
-          <View style={[styles.serviceChip, { backgroundColor: `${service.color}15` }]}>
-            <Text style={styles.serviceEmoji}>{service.icon}</Text>
-            <Text style={[styles.serviceLabel, { color: service.color }]}>{service.title}</Text>
+          <View style={styles.serviceChip}>
+            <Ionicons name={service.iconName as any} size={16} color={COLORS.white} />
+            <Text style={styles.serviceLabel}>{service.title}</Text>
           </View>
         )}
 
@@ -80,7 +81,7 @@ export default function TripSummaryScreen({ navigation, route }: any) {
           <View style={styles.routeRow}>
             <View style={styles.routeDotGreen} />
             <View style={styles.routeInfo}>
-              <Text style={styles.routeLabel}>Pickup</Text>
+              <Text style={styles.routeLabel}>PICKUP LOCATION</Text>
               <Text style={styles.routeAddress} numberOfLines={2}>{pickupLocation.address}</Text>
             </View>
           </View>
@@ -88,7 +89,7 @@ export default function TripSummaryScreen({ navigation, route }: any) {
           <View style={styles.routeRow}>
             <View style={styles.routeDotRed} />
             <View style={styles.routeInfo}>
-              <Text style={styles.routeLabel}>Destination</Text>
+              <Text style={styles.routeLabel}>DESTINATION</Text>
               <Text style={styles.routeAddress} numberOfLines={2}>{dropLocation.address}</Text>
             </View>
           </View>
@@ -109,7 +110,7 @@ export default function TripSummaryScreen({ navigation, route }: any) {
 
         {/* Fare Breakdown */}
         <View style={styles.fareCard}>
-          <Text style={styles.fareSectionTitle}>Fare Breakdown</Text>
+          <Text style={styles.fareSectionTitle}>FARE BREAKDOWN</Text>
           <View style={styles.fareRow}>
             <Text style={styles.fareLabel}>Driver Fee</Text>
             <Text style={styles.fareValue}>LKR {driverFee}</Text>
@@ -127,23 +128,27 @@ export default function TripSummaryScreen({ navigation, route }: any) {
 
         {/* Payment Method */}
         <View style={styles.paymentSection}>
-          <Text style={styles.sectionLabel}>Payment Method</Text>
-          {PAYMENT_METHODS.map((pm) => (
-            <TouchableOpacity
-              key={pm.id}
-              style={[styles.paymentOption, paymentMethod === pm.id && styles.paymentOptionActive]}
-              onPress={() => setPaymentMethod(pm.id)}
-            >
-              <Text style={styles.paymentIcon}>{pm.icon}</Text>
-              <View style={{ flex: 1 }}>
-                <Text style={styles.paymentLabel}>{pm.label}</Text>
-                <Text style={styles.paymentDesc}>{pm.desc}</Text>
-              </View>
-              <View style={[styles.radioOuter, paymentMethod === pm.id && { borderColor: COLORS.primary }]}>
-                {paymentMethod === pm.id && <View style={styles.radioInner} />}
-              </View>
-            </TouchableOpacity>
-          ))}
+          <Text style={styles.sectionLabel}>PAYMENT METHOD</Text>
+          {PAYMENT_METHODS.map((pm) => {
+            const isActive = paymentMethod === pm.id;
+            return (
+              <TouchableOpacity
+                key={pm.id}
+                style={[styles.paymentOption, isActive && styles.paymentOptionActive]}
+                onPress={() => setPaymentMethod(pm.id)}
+                activeOpacity={0.85}
+              >
+                <Ionicons name={pm.iconName} size={24} color={COLORS.white} style={{ marginRight: 4 }} />
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.paymentLabel}>{pm.label}</Text>
+                  <Text style={styles.paymentDesc}>{pm.desc}</Text>
+                </View>
+                <View style={[styles.radioOuter, isActive && styles.radioOuterActive]}>
+                  {isActive && <View style={styles.radioInner} />}
+                </View>
+              </TouchableOpacity>
+            );
+          })}
         </View>
       </ScrollView>
 
@@ -157,11 +162,12 @@ export default function TripSummaryScreen({ navigation, route }: any) {
           style={[styles.confirmButton, isLoading && styles.confirmButtonDisabled]}
           onPress={handleConfirmBooking}
           disabled={isLoading}
+          activeOpacity={0.9}
         >
           {isLoading ? (
-            <ActivityIndicator color={COLORS.white} />
+            <ActivityIndicator color={COLORS.black} />
           ) : (
-            <Text style={styles.confirmButtonText}>🚗 Book Driver Now</Text>
+            <Text style={styles.confirmButtonText}>Confirm & Book</Text>
           )}
         </TouchableOpacity>
       </View>
@@ -176,16 +182,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: SPACING.xl,
-    paddingTop: 60,
+    paddingTop: 64,
     paddingBottom: SPACING.md,
   },
   backButton: {
-    width: 40, height: 40, borderRadius: BORDER_RADIUS.sm,
+    width: 44, height: 44, borderRadius: BORDER_RADIUS.sm,
     backgroundColor: COLORS.surface, alignItems: 'center', justifyContent: 'center',
+    borderWidth: 1, borderColor: COLORS.cardBorder,
   },
-  backIcon: { fontSize: 20, color: COLORS.white },
-  title: { fontSize: FONT_SIZES.lg, fontWeight: '800', color: COLORS.white },
-  content: { paddingHorizontal: SPACING.xl, paddingBottom: 140, gap: 16 },
+  title: { fontSize: FONT_SIZES.lg, fontWeight: '800', color: COLORS.white, letterSpacing: -0.5 },
+  content: { paddingHorizontal: SPACING.xl, paddingBottom: 160, gap: 16 },
   serviceChip: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -194,91 +200,94 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 8,
     gap: 8,
+    backgroundColor: COLORS.surface,
+    borderWidth: 1,
+    borderColor: COLORS.cardBorder,
   },
-  serviceEmoji: { fontSize: 18 },
-  serviceLabel: { fontSize: FONT_SIZES.sm, fontWeight: '700' },
+  serviceLabel: { fontSize: FONT_SIZES.sm, fontWeight: '700', color: COLORS.white },
   routeCard: {
     backgroundColor: COLORS.surface,
-    borderRadius: BORDER_RADIUS.lg,
+    borderRadius: BORDER_RADIUS.sm,
     padding: SPACING.base,
     borderWidth: 1,
     borderColor: COLORS.cardBorder,
   },
   routeRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 12 },
   routeDotGreen: {
-    width: 12, height: 12, borderRadius: 6,
-    backgroundColor: COLORS.secondary, marginTop: 4,
+    width: 10, height: 10, borderRadius: 5,
+    backgroundColor: COLORS.success, marginTop: 4,
   },
   routeDotRed: {
-    width: 12, height: 12, borderRadius: 6,
+    width: 10, height: 10, borderRadius: 5,
     backgroundColor: COLORS.error, marginTop: 4,
   },
   routeVertLine: {
-    width: 2, height: 20, backgroundColor: COLORS.surfaceLight,
-    marginLeft: 5, marginVertical: 4,
+    width: 1.5, height: 24, backgroundColor: COLORS.surfaceLight,
+    marginLeft: 4, marginVertical: 4,
   },
   routeInfo: { flex: 1 },
-  routeLabel: { fontSize: FONT_SIZES.xs, color: COLORS.textMuted, fontWeight: '600', marginBottom: 2 },
+  routeLabel: { fontSize: 9, color: COLORS.textMuted, fontWeight: '700', letterSpacing: 1, marginBottom: 4 },
   routeAddress: { fontSize: FONT_SIZES.sm, color: COLORS.textPrimary, fontWeight: '600', lineHeight: 20 },
   statsRow: {
     flexDirection: 'row',
     backgroundColor: COLORS.surface,
-    borderRadius: BORDER_RADIUS.lg,
+    borderRadius: BORDER_RADIUS.sm,
     padding: SPACING.base,
     borderWidth: 1,
     borderColor: COLORS.cardBorder,
   },
   statCard: { flex: 1, alignItems: 'center' },
-  statValue: { fontSize: FONT_SIZES.xl, fontWeight: '800', color: COLORS.primary },
-  statLabel: { fontSize: FONT_SIZES.xs, color: COLORS.textSecondary, marginTop: 4 },
+  statValue: { fontSize: FONT_SIZES.xl, fontWeight: '800', color: COLORS.white, letterSpacing: -0.5 },
+  statLabel: { fontSize: FONT_SIZES.xs, color: COLORS.textSecondary, marginTop: 4, fontWeight: '600' },
   statDivider: { width: 1, backgroundColor: COLORS.cardBorder, marginHorizontal: 16 },
   fareCard: {
     backgroundColor: COLORS.surface,
-    borderRadius: BORDER_RADIUS.lg,
+    borderRadius: BORDER_RADIUS.sm,
     padding: SPACING.base,
     borderWidth: 1,
     borderColor: COLORS.cardBorder,
     gap: 10,
   },
-  fareSectionTitle: { fontSize: FONT_SIZES.sm, fontWeight: '700', color: COLORS.textSecondary },
+  fareSectionTitle: { fontSize: 9, fontWeight: '700', color: COLORS.textMuted, letterSpacing: 1, marginBottom: 4 },
   fareRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  fareLabel: { fontSize: FONT_SIZES.base, color: COLORS.textPrimary },
-  fareValue: { fontSize: FONT_SIZES.base, fontWeight: '600', color: COLORS.textPrimary },
-  fareDivider: { height: 1, backgroundColor: COLORS.cardBorder },
+  fareLabel: { fontSize: FONT_SIZES.base, color: COLORS.textSecondary, fontWeight: '600' },
+  fareValue: { fontSize: FONT_SIZES.base, fontWeight: '700', color: COLORS.white },
+  fareDivider: { height: 1.5, backgroundColor: COLORS.cardBorder },
   fareTotalLabel: { fontSize: FONT_SIZES.lg, fontWeight: '800', color: COLORS.white },
-  fareTotalValue: { fontSize: FONT_SIZES.xl, fontWeight: '800', color: COLORS.primary },
+  fareTotalValue: { fontSize: FONT_SIZES.xl, fontWeight: '800', color: COLORS.white, letterSpacing: -0.5 },
   paymentSection: { gap: 10 },
-  sectionLabel: { fontSize: FONT_SIZES.base, fontWeight: '700', color: COLORS.textSecondary },
+  sectionLabel: { fontSize: 9, fontWeight: '700', color: COLORS.textMuted, letterSpacing: 1 },
   paymentOption: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: COLORS.surface,
-    borderRadius: BORDER_RADIUS.lg,
+    borderRadius: BORDER_RADIUS.sm,
     padding: SPACING.base,
     borderWidth: 1,
     borderColor: COLORS.cardBorder,
     gap: 12,
   },
-  paymentOptionActive: { borderColor: COLORS.primary },
-  paymentIcon: { fontSize: 24 },
-  paymentLabel: { fontSize: FONT_SIZES.base, fontWeight: '700', color: COLORS.textPrimary },
+  paymentOptionActive: { borderColor: COLORS.white, borderWidth: 1.5 },
+  paymentLabel: { fontSize: FONT_SIZES.base, fontWeight: '800', color: COLORS.white },
   paymentDesc: { fontSize: FONT_SIZES.xs, color: COLORS.textSecondary, marginTop: 2 },
   radioOuter: {
-    width: 22, height: 22, borderRadius: 11, borderWidth: 2,
+    width: 22, height: 22, borderRadius: 11, borderWidth: 1.5,
     borderColor: COLORS.cardBorder, alignItems: 'center', justifyContent: 'center',
+    marginLeft: 8,
   },
-  radioInner: { width: 10, height: 10, borderRadius: 5, backgroundColor: COLORS.primary },
+  radioOuterActive: { borderColor: COLORS.white },
+  radioInner: { width: 10, height: 10, borderRadius: 5, backgroundColor: COLORS.white },
   footer: {
     position: 'absolute', bottom: 0, left: 0, right: 0, padding: SPACING.xl,
     backgroundColor: COLORS.background, borderTopWidth: 1, borderTopColor: COLORS.cardBorder, gap: 12,
   },
   totalRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   totalLabel: { fontSize: FONT_SIZES.sm, color: COLORS.textSecondary, fontWeight: '600' },
-  totalAmount: { fontSize: FONT_SIZES.xl, fontWeight: '800', color: COLORS.white },
+  totalAmount: { fontSize: FONT_SIZES.xl, fontWeight: '800', color: COLORS.white, letterSpacing: -0.5 },
   confirmButton: {
-    backgroundColor: COLORS.primary, borderRadius: BORDER_RADIUS.lg,
-    height: 56, alignItems: 'center', justifyContent: 'center', ...SHADOWS.lg,
+    backgroundColor: COLORS.white, borderRadius: BORDER_RADIUS.sm,
+    height: 56, alignItems: 'center', justifyContent: 'center',
   },
-  confirmButtonDisabled: { opacity: 0.7 },
-  confirmButtonText: { color: COLORS.white, fontSize: FONT_SIZES.md, fontWeight: '700' },
+  confirmButtonDisabled: { opacity: 0.6 },
+  confirmButtonText: { color: COLORS.black, fontSize: FONT_SIZES.base, fontWeight: '800' },
 });

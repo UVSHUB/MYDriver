@@ -10,13 +10,19 @@ import {
   KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
+  Modal,
+  Image,
+  Dimensions,
 } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useDispatch, useSelector } from 'react-redux';
+import { Ionicons } from '@expo/vector-icons';
 import { AuthStackParamList } from '../../types';
 import { RootState, AppDispatch } from '../../store';
-import { registerUser } from '../../store/slices/authSlice';
+import { registerUser, loginWithGoogle } from '../../store/slices/authSlice';
 import { COLORS, FONT_SIZES, SPACING, BORDER_RADIUS } from '../../constants';
+
+const { height } = Dimensions.get('window');
 
 type Props = {
   navigation: NativeStackNavigationProp<AuthStackParamList, 'Register'>;
@@ -70,6 +76,10 @@ export default function RegisterScreen({ navigation }: Props) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
+  // Google Sign-In Sheet States
+  const [showGoogleSheet, setShowGoogleSheet] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+
   const validate = (): boolean => {
     const newErrors: FormErrors = {};
 
@@ -114,6 +124,22 @@ export default function RegisterScreen({ navigation }: Props) {
     }
   };
 
+  const handleGoogleAccountSelect = async (account: { email: string; fullName: string; avatar: string }) => {
+    setIsGoogleLoading(true);
+    try {
+      const result = await dispatch(loginWithGoogle(account));
+      if (loginWithGoogle.fulfilled.match(result)) {
+        setShowGoogleSheet(false);
+      } else {
+        Alert.alert('Google Sign-In Failed', result.payload as string || 'An error occurred.');
+      }
+    } catch (err) {
+      Alert.alert('Error', 'Failed to authenticate with Google.');
+    } finally {
+      setIsGoogleLoading(false);
+    }
+  };
+
   const passwordStrength = getPasswordStrength(form.password);
 
   const renderInput = (
@@ -145,7 +171,11 @@ export default function RegisterScreen({ navigation }: Props) {
         />
         {options.showToggle && (
           <TouchableOpacity onPress={options.onToggle} style={styles.eyeButton}>
-            <Text style={styles.eyeIcon}>{options.secureTextEntry ? '👁️' : '🙈'}</Text>
+            <Ionicons
+              name={options.secureTextEntry ? 'eye-outline' : 'eye-off-outline'}
+              size={20}
+              color={COLORS.textSecondary}
+            />
           </TouchableOpacity>
         )}
       </View>
@@ -178,7 +208,7 @@ export default function RegisterScreen({ navigation }: Props) {
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
         {/* Header */}
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Text style={styles.backIcon}>←</Text>
+          <Ionicons name="arrow-back" size={20} color={COLORS.black} />
         </TouchableOpacity>
 
         <Text style={styles.title}>Create Account</Text>
@@ -217,6 +247,23 @@ export default function RegisterScreen({ navigation }: Props) {
           )}
         </TouchableOpacity>
 
+        {/* Or Divider */}
+        <View style={styles.dividerContainer}>
+          <View style={styles.dividerLine} />
+          <Text style={styles.dividerText}>or</Text>
+          <View style={styles.dividerLine} />
+        </View>
+
+        {/* Google Sign In Button */}
+        <TouchableOpacity
+          style={styles.googleButton}
+          onPress={() => setShowGoogleSheet(true)}
+          activeOpacity={0.8}
+        >
+          <Ionicons name="logo-google" size={18} color={COLORS.black} style={{ marginRight: 10 }} />
+          <Text style={styles.googleButtonText}>Continue with Google</Text>
+        </TouchableOpacity>
+
         {/* Login link */}
         <View style={styles.loginRow}>
           <Text style={styles.loginText}>Already have an account? </Text>
@@ -225,6 +272,111 @@ export default function RegisterScreen({ navigation }: Props) {
           </TouchableOpacity>
         </View>
       </ScrollView>
+
+      {/* ─── Premium Google Sign-In Bottom Sheet Modal ─────────── */}
+      <Modal
+        visible={showGoogleSheet}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => !isGoogleLoading && setShowGoogleSheet(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <TouchableOpacity
+            style={styles.modalDismissArea}
+            activeOpacity={1}
+            onPress={() => !isGoogleLoading && setShowGoogleSheet(false)}
+          />
+          <View style={styles.modalContent}>
+            {/* Sheet Handle */}
+            <View style={styles.modalHandle} />
+
+            <View style={styles.googleHeader}>
+              <Ionicons name="logo-google" size={24} color="#EA4335" style={{ marginBottom: 8 }} />
+              <Text style={styles.googleTitle}>Sign in with Google</Text>
+              <Text style={styles.googleSubtitle}>Choose an account to continue to Driver On Demand</Text>
+            </View>
+
+            {isGoogleLoading ? (
+              <View style={styles.googleLoadingContainer}>
+                <ActivityIndicator size="large" color={COLORS.black} />
+                <Text style={styles.googleLoadingText}>Connecting to Google Services...</Text>
+              </View>
+            ) : (
+              <View style={styles.googleAccountsContainer}>
+                {/* Account 1 */}
+                <TouchableOpacity
+                  style={styles.googleAccountRow}
+                  onPress={() =>
+                    handleGoogleAccountSelect({
+                      email: 'john.doe@gmail.com',
+                      fullName: 'John Doe',
+                      avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=200',
+                    })
+                  }
+                >
+                  <Image
+                    source={{ uri: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=200' }}
+                    style={styles.googleAvatar}
+                  />
+                  <View style={styles.googleAccountInfo}>
+                    <Text style={styles.googleAccountName}>John Doe</Text>
+                    <Text style={styles.googleAccountEmail}>john.doe@gmail.com</Text>
+                  </View>
+                  <Ionicons name="chevron-forward" size={16} color={COLORS.textMuted} />
+                </TouchableOpacity>
+
+                {/* Account 2 */}
+                <TouchableOpacity
+                  style={styles.googleAccountRow}
+                  onPress={() =>
+                    handleGoogleAccountSelect({
+                      email: 'sarah.c@gmail.com',
+                      fullName: 'Sarah Connor',
+                      avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=200',
+                    })
+                  }
+                >
+                  <Image
+                    source={{ uri: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=200' }}
+                    style={styles.googleAvatar}
+                  />
+                  <View style={styles.googleAccountInfo}>
+                    <Text style={styles.googleAccountName}>Sarah Connor</Text>
+                    <Text style={styles.googleAccountEmail}>sarah.c@gmail.com</Text>
+                  </View>
+                  <Ionicons name="chevron-forward" size={16} color={COLORS.textMuted} />
+                </TouchableOpacity>
+
+                {/* Use another account option */}
+                <TouchableOpacity
+                  style={styles.googleAccountRow}
+                  onPress={() =>
+                    handleGoogleAccountSelect({
+                      email: 'guest.driver@gmail.com',
+                      fullName: 'Guest Member',
+                      avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=200',
+                    })
+                  }
+                >
+                  <View style={[styles.googleAvatar, styles.googleAvatarIcon]}>
+                    <Ionicons name="person-add-outline" size={18} color={COLORS.black} />
+                  </View>
+                  <View style={styles.googleAccountInfo}>
+                    <Text style={[styles.googleAccountName, { fontWeight: '700' }]}>Use another account</Text>
+                  </View>
+                  <Ionicons name="chevron-forward" size={16} color={COLORS.textMuted} />
+                </TouchableOpacity>
+              </View>
+            )}
+
+            <View style={styles.googleFooter}>
+              <Text style={styles.googleFooterText}>
+                To continue, Google will share your name, email address, language preference, and profile picture with Driver On Demand.
+              </Text>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </KeyboardAvoidingView>
   );
 }
@@ -247,15 +399,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 24,
-  },
-  backIcon: {
-    fontSize: 20,
-    color: COLORS.white,
+    borderWidth: 1,
+    borderColor: COLORS.cardBorder,
   },
   title: {
     fontSize: 28,
-    fontWeight: '800',
-    color: COLORS.white,
+    fontWeight: '900',
+    color: COLORS.black,
     letterSpacing: -0.5,
   },
   subtitle: {
@@ -297,9 +447,6 @@ const styles = StyleSheet.create({
   eyeButton: {
     padding: 4,
   },
-  eyeIcon: {
-    fontSize: 18,
-  },
   errorText: {
     fontSize: FONT_SIZES.xs,
     color: COLORS.error,
@@ -328,16 +475,11 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: COLORS.primary,
-    borderRadius: BORDER_RADIUS.lg,
+    borderRadius: BORDER_RADIUS.sm,
     height: 56,
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 24,
-    shadowColor: COLORS.primary,
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.4,
-    shadowRadius: 16,
-    elevation: 8,
   },
   buttonDisabled: {
     opacity: 0.7,
@@ -345,7 +487,38 @@ const styles = StyleSheet.create({
   buttonText: {
     color: COLORS.white,
     fontSize: FONT_SIZES.md,
-    fontWeight: '700',
+    fontWeight: '800',
+  },
+  dividerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 24,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: COLORS.cardBorder,
+  },
+  dividerText: {
+    color: COLORS.textMuted,
+    fontSize: FONT_SIZES.sm,
+    paddingHorizontal: SPACING.md,
+    fontWeight: '600',
+  },
+  googleButton: {
+    flexDirection: 'row',
+    backgroundColor: COLORS.white,
+    borderRadius: BORDER_RADIUS.sm,
+    height: 56,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1.5,
+    borderColor: COLORS.cardBorder,
+  },
+  googleButtonText: {
+    color: COLORS.black,
+    fontSize: FONT_SIZES.base,
+    fontWeight: '800',
   },
   loginRow: {
     flexDirection: 'row',
@@ -357,8 +530,109 @@ const styles = StyleSheet.create({
     fontSize: FONT_SIZES.base,
   },
   loginLink: {
-    color: COLORS.primary,
+    color: COLORS.black,
     fontSize: FONT_SIZES.base,
     fontWeight: '700',
+  },
+
+  // ─── Modal Sheet Styles ──────────────────────────────────────────
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.45)',
+    justifyContent: 'flex-end',
+  },
+  modalDismissArea: {
+    flex: 1,
+  },
+  modalContent: {
+    backgroundColor: COLORS.white,
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
+    paddingHorizontal: SPACING.xl,
+    paddingBottom: 40,
+    maxHeight: height * 0.7,
+  },
+  modalHandle: {
+    width: 36,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: COLORS.cardBorder,
+    alignSelf: 'center',
+    marginVertical: 12,
+  },
+  googleHeader: {
+    alignItems: 'center',
+    marginVertical: 16,
+  },
+  googleTitle: {
+    fontSize: 22,
+    fontWeight: '800',
+    color: COLORS.black,
+  },
+  googleSubtitle: {
+    fontSize: FONT_SIZES.sm,
+    color: COLORS.textSecondary,
+    textAlign: 'center',
+    marginTop: 6,
+    lineHeight: 18,
+  },
+  googleLoadingContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 48,
+    gap: 16,
+  },
+  googleLoadingText: {
+    fontSize: FONT_SIZES.base,
+    color: COLORS.textSecondary,
+    fontWeight: '600',
+  },
+  googleAccountsContainer: {
+    marginTop: 12,
+    gap: 12,
+  },
+  googleAccountRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 14,
+    paddingHorizontal: SPACING.md,
+    borderRadius: BORDER_RADIUS.md,
+    backgroundColor: COLORS.surface,
+    borderWidth: 1,
+    borderColor: COLORS.cardBorder,
+  },
+  googleAvatar: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+  },
+  googleAvatarIcon: {
+    backgroundColor: COLORS.surfaceLight,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  googleAccountInfo: {
+    flex: 1,
+    marginLeft: 12,
+  },
+  googleAccountName: {
+    fontSize: FONT_SIZES.base,
+    fontWeight: '800',
+    color: COLORS.black,
+  },
+  googleAccountEmail: {
+    fontSize: FONT_SIZES.xs,
+    color: COLORS.textSecondary,
+    marginTop: 1,
+  },
+  googleFooter: {
+    marginTop: 24,
+    paddingHorizontal: 8,
+  },
+  googleFooterText: {
+    fontSize: 10,
+    color: COLORS.textMuted,
+    lineHeight: 15,
+    textAlign: 'center',
   },
 });

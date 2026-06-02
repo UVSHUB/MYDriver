@@ -12,6 +12,7 @@ import {
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RouteProp } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
+import { Ionicons } from '@expo/vector-icons';
 import { AuthStackParamList } from '../../types';
 import { RootState, AppDispatch } from '../../store';
 import { verifyOTP } from '../../store/slices/authSlice';
@@ -37,7 +38,6 @@ export default function OTPVerificationScreen({ navigation, route }: Props) {
   const [isResending, setIsResending] = useState(false);
   const inputs = useRef<(TextInput | null)[]>([]);
   const shakeAnim = useRef(new Animated.Value(0)).current;
-  const successAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -139,12 +139,12 @@ export default function OTPVerificationScreen({ navigation, route }: Props) {
     <View style={styles.container}>
       {/* Header */}
       <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-        <Text style={styles.backIcon}>←</Text>
+        <Ionicons name="arrow-back" size={20} color={COLORS.black} />
       </TouchableOpacity>
 
-      {/* Icon */}
+      {/* Security Vector Icon instead of Emoji */}
       <View style={styles.iconContainer}>
-        <Text style={styles.iconEmoji}>📱</Text>
+        <Ionicons name="shield-checkmark" size={32} color={COLORS.black} />
       </View>
 
       <Text style={styles.title}>Verify Phone</Text>
@@ -172,6 +172,7 @@ export default function OTPVerificationScreen({ navigation, route }: Props) {
             maxLength={OTP_LENGTH}
             textAlign="center"
             selectionColor={COLORS.primary}
+            placeholderTextColor={COLORS.textMuted}
           />
         ))}
       </Animated.View>
@@ -223,10 +224,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 32,
-  },
-  backIcon: {
-    fontSize: 20,
-    color: COLORS.white,
+    borderWidth: 1,
+    borderColor: COLORS.cardBorder,
   },
   iconContainer: {
     width: 80,
@@ -239,13 +238,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: COLORS.cardBorder,
   },
-  iconEmoji: {
-    fontSize: 36,
-  },
   title: {
     fontSize: 28,
-    fontWeight: '800',
-    color: COLORS.white,
+    fontWeight: '900',
+    color: COLORS.black,
     letterSpacing: -0.5,
   },
   subtitle: {
@@ -265,7 +261,7 @@ const styles = StyleSheet.create({
     marginBottom: 36,
   },
   otpInput: {
-    width: 50,
+    width: 48,
     height: 56,
     backgroundColor: COLORS.surface,
     borderRadius: BORDER_RADIUS.md,
@@ -273,24 +269,19 @@ const styles = StyleSheet.create({
     borderColor: COLORS.cardBorder,
     fontSize: 22,
     fontWeight: '700',
-    color: COLORS.white,
+    color: COLORS.black,
     textAlign: 'center',
   },
   otpInputFilled: {
     borderColor: COLORS.primary,
-    backgroundColor: `${COLORS.primary}15`,
+    backgroundColor: 'rgba(0, 0, 0, 0.03)',
   },
   button: {
     backgroundColor: COLORS.primary,
-    borderRadius: BORDER_RADIUS.lg,
+    borderRadius: BORDER_RADIUS.sm,
     height: 56,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: COLORS.primary,
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.4,
-    shadowRadius: 16,
-    elevation: 8,
   },
   buttonDisabled: {
     opacity: 0.7,
@@ -298,7 +289,7 @@ const styles = StyleSheet.create({
   buttonText: {
     color: COLORS.white,
     fontSize: FONT_SIZES.md,
-    fontWeight: '700',
+    fontWeight: '800',
   },
   resendContainer: {
     alignItems: 'center',

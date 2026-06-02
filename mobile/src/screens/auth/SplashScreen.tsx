@@ -4,7 +4,6 @@ import {
   Text,
   StyleSheet,
   Animated,
-  Dimensions,
   StatusBar,
 } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -12,9 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '../../store';
 import { loadStoredAuth } from '../../store/slices/authSlice';
 import { RootStackParamList } from '../../types';
-import { COLORS, FONT_SIZES } from '../../constants';
-
-const { width, height } = Dimensions.get('window');
+import { COLORS, FONT_SIZES, BORDER_RADIUS } from '../../constants';
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Splash'>;
@@ -32,24 +29,24 @@ export default function SplashScreen({ navigation }: Props) {
   const dotAnim3 = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    // Logo animation
+    // Logo entrance spring animation
     Animated.sequence([
       Animated.parallel([
         Animated.spring(logoScale, {
           toValue: 1,
-          tension: 50,
-          friction: 7,
+          tension: 40,
+          friction: 6,
           useNativeDriver: true,
         }),
         Animated.timing(logoOpacity, {
           toValue: 1,
-          duration: 600,
+          duration: 700,
           useNativeDriver: true,
         }),
       ]),
       Animated.timing(textOpacity, {
         toValue: 1,
-        duration: 400,
+        duration: 500,
         useNativeDriver: true,
       }),
     ]).start();
@@ -72,44 +69,44 @@ export default function SplashScreen({ navigation }: Props) {
     // Load auth state and navigate
     const timer = setTimeout(async () => {
       await dispatch(loadStoredAuth());
-    }, 2500);
+    }, 2800);
 
     return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
-    const checkAuth = async () => {
-      if (isAuthenticated !== undefined) {
-        setTimeout(() => {
-          navigation.replace(isAuthenticated ? 'Main' : 'Auth');
-        }, 500);
-      }
-    };
-    checkAuth();
+    if (isAuthenticated !== undefined) {
+      const navTimer = setTimeout(() => {
+        navigation.replace(isAuthenticated ? 'Main' : 'Auth');
+      }, 500);
+      return () => clearTimeout(navTimer);
+    }
   }, [isAuthenticated]);
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor={COLORS.background} />
+      <StatusBar barStyle="dark-content" backgroundColor={COLORS.background} />
 
-      {/* Background gradient circles */}
-      <View style={styles.circle1} />
-      <View style={styles.circle2} />
+      {/* Decorative background glow rings for high-end feel */}
+      <View style={styles.glowRing1} />
+      <View style={styles.glowRing2} />
 
-      {/* Logo */}
+      {/* App Logo */}
       <Animated.View
-        style={[styles.logoContainer, { transform: [{ scale: logoScale }], opacity: logoOpacity }]}
+        style={[styles.logoWrapper, { transform: [{ scale: logoScale }], opacity: logoOpacity }]}
       >
-        <View style={styles.logoIcon}>
-          <Text style={styles.logoEmoji}>🚗</Text>
-        </View>
+        <Animated.Image
+          source={require('../../../assets/Logo.png')}
+          style={styles.logoImage}
+          resizeMode="contain"
+        />
       </Animated.View>
 
-      {/* App Name */}
+      {/* App Name Stark Luxury branding */}
       <Animated.View style={{ opacity: textOpacity, alignItems: 'center' }}>
-        <Text style={styles.appName}>Driver</Text>
-        <Text style={styles.appNameAccent}>On Demand</Text>
-        <Text style={styles.tagline}>Your personal driver, anytime</Text>
+        <Text style={styles.appName}>DRIVER</Text>
+        <Text style={styles.appNameAccent}>ON DEMAND</Text>
+        <Text style={styles.tagline}>Your Professional Driver Awaits</Text>
       </Animated.View>
 
       {/* Loading Dots */}
@@ -121,7 +118,7 @@ export default function SplashScreen({ navigation }: Props) {
               styles.dot,
               {
                 opacity: anim,
-                transform: [{ scale: anim.interpolate({ inputRange: [0, 1], outputRange: [0.6, 1] }) }],
+                transform: [{ scale: anim.interpolate({ inputRange: [0, 1], outputRange: [0.6, 1.1] }) }],
               },
             ]}
           />
@@ -138,75 +135,68 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  circle1: {
+  glowRing1: {
     position: 'absolute',
     width: 300,
     height: 300,
     borderRadius: 150,
-    backgroundColor: COLORS.primary,
-    opacity: 0.05,
+    borderWidth: 1.5,
+    borderColor: 'rgba(0, 0, 0, 0.02)',
     top: -50,
     right: -80,
   },
-  circle2: {
+  glowRing2: {
     position: 'absolute',
-    width: 200,
-    height: 200,
-    borderRadius: 100,
-    backgroundColor: COLORS.secondary,
-    opacity: 0.07,
-    bottom: 100,
-    left: -50,
+    width: 240,
+    height: 240,
+    borderRadius: 120,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.015)',
+    bottom: 80,
+    left: -60,
   },
-  logoContainer: {
-    marginBottom: 24,
-  },
-  logoIcon: {
-    width: 100,
-    height: 100,
-    borderRadius: 28,
-    backgroundColor: COLORS.primary,
+  logoWrapper: {
+    marginBottom: 28,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: COLORS.primary,
-    shadowOffset: { width: 0, height: 12 },
-    shadowOpacity: 0.5,
-    shadowRadius: 20,
-    elevation: 15,
   },
-  logoEmoji: {
-    fontSize: 48,
+  logoImage: {
+    width: 140,
+    height: 140,
+    borderRadius: BORDER_RADIUS.sm,
   },
   appName: {
-    fontSize: 36,
-    fontWeight: '800',
-    color: COLORS.white,
-    letterSpacing: -0.5,
+    fontSize: 34,
+    fontWeight: '900',
+    color: COLORS.black,
+    letterSpacing: -1,
   },
   appNameAccent: {
-    fontSize: 36,
+    fontSize: 22,
     fontWeight: '800',
-    color: COLORS.primary,
-    letterSpacing: -0.5,
-    marginTop: -4,
+    color: COLORS.textSecondary,
+    letterSpacing: 2,
+    marginTop: 2,
   },
   tagline: {
-    fontSize: FONT_SIZES.sm,
-    color: COLORS.textSecondary,
-    marginTop: 8,
-    letterSpacing: 0.5,
+    fontSize: FONT_SIZES.xs,
+    color: COLORS.textMuted,
+    marginTop: 12,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 1.5,
   },
   dotsContainer: {
     flexDirection: 'row',
     position: 'absolute',
     bottom: 80,
-    gap: 8,
+    gap: 6,
   },
   dot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: COLORS.primary,
-    marginHorizontal: 3,
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: COLORS.black,
+    marginHorizontal: 2,
   },
 });

@@ -7,14 +7,13 @@ import {
   ScrollView,
   StatusBar,
   Alert,
-  ActivityIndicator,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { RootState, AppDispatch } from '../../store';
-import { setActiveBooking, clearBooking, setService } from '../../store/slices/bookingSlice';
-import { bookingApi } from '../../api';
+import { setService } from '../../store/slices/bookingSlice';
 import { ServiceType } from '../../types';
-import { COLORS, FONT_SIZES, SPACING, BORDER_RADIUS, SHADOWS, SERVICE_TYPES } from '../../constants';
+import { COLORS, FONT_SIZES, SPACING, BORDER_RADIUS, SERVICE_TYPES } from '../../constants';
 
 export default function ServiceSelectScreen({ navigation }: any) {
   const dispatch = useDispatch<AppDispatch>();
@@ -40,8 +39,8 @@ export default function ServiceSelectScreen({ navigation }: any) {
 
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Text style={styles.backIcon}>←</Text>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton} activeOpacity={0.8}>
+          <Ionicons name="arrow-back" size={22} color={COLORS.white} />
         </TouchableOpacity>
         <Text style={styles.title}>Select Service</Text>
         <View style={{ width: 40 }} />
@@ -60,41 +59,44 @@ export default function ServiceSelectScreen({ navigation }: any) {
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
-        <Text style={styles.subtitle}>What type of driving service do you need?</Text>
+        <Text style={styles.subtitle}>Select the exact professional driving solution required for your vehicle.</Text>
 
         <View style={styles.serviceList}>
-          {SERVICE_TYPES.map((service) => (
-            <TouchableOpacity
-              key={service.id}
-              style={[
-                styles.serviceCard,
-                selected === service.id && { borderColor: service.color, borderWidth: 2 },
-              ]}
-              onPress={() => handleSelect(service.id)}
-              activeOpacity={0.85}
-            >
-              <View style={[styles.serviceIconBg, { backgroundColor: `${service.color}20` }]}>
-                <Text style={styles.serviceEmoji}>{service.icon}</Text>
-              </View>
-              <View style={styles.serviceInfo}>
-                <Text style={styles.serviceName}>{service.title}</Text>
-                <Text style={styles.serviceDesc}>{service.description}</Text>
-              </View>
-              <View style={[
-                styles.radioOuter,
-                selected === service.id && { borderColor: service.color },
-              ]}>
-                {selected === service.id && (
-                  <View style={[styles.radioInner, { backgroundColor: service.color }]} />
-                )}
-              </View>
-              {selected === service.id && (
-                <View style={[styles.selectedBadge, { backgroundColor: service.color }]}>
-                  <Text style={styles.selectedBadgeText}>Selected</Text>
+          {SERVICE_TYPES.map((service) => {
+            const isMCOIcon = service.id === 'emergency';
+            const isSelected = selected === service.id;
+            return (
+              <TouchableOpacity
+                key={service.id}
+                style={[
+                  styles.serviceCard,
+                  isSelected && styles.serviceCardSelected,
+                ]}
+                onPress={() => handleSelect(service.id)}
+                activeOpacity={0.85}
+              >
+                <View style={styles.serviceIconBg}>
+                  {isMCOIcon ? (
+                    <MaterialCommunityIcons name={service.iconName as any} size={24} color={isSelected ? COLORS.white : COLORS.error} />
+                  ) : (
+                    <Ionicons name={service.iconName as any} size={24} color={COLORS.white} />
+                  )}
                 </View>
-              )}
-            </TouchableOpacity>
-          ))}
+                <View style={styles.serviceInfo}>
+                  <Text style={styles.serviceName}>{service.title}</Text>
+                  <Text style={styles.serviceDesc}>{service.description}</Text>
+                </View>
+                <View style={[
+                  styles.radioOuter,
+                  isSelected && styles.radioOuterSelected,
+                ]}>
+                  {isSelected && (
+                    <View style={styles.radioInner} />
+                  )}
+                </View>
+              </TouchableOpacity>
+            );
+          })}
         </View>
       </ScrollView>
 
@@ -104,8 +106,10 @@ export default function ServiceSelectScreen({ navigation }: any) {
           style={[styles.nextButton, !selected && styles.nextButtonDisabled]}
           onPress={handleNext}
           disabled={!selected}
+          activeOpacity={0.9}
         >
-          <Text style={styles.nextButtonText}>Continue →</Text>
+          <Text style={styles.nextButtonText}>Continue</Text>
+          <Ionicons name="arrow-forward" size={18} color={selected ? COLORS.black : COLORS.textMuted} style={{ marginLeft: 8 }} />
         </TouchableOpacity>
       </View>
     </View>
@@ -119,24 +123,26 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: SPACING.xl,
-    paddingTop: 60,
+    paddingTop: 64,
     paddingBottom: SPACING.md,
   },
   backButton: {
-    width: 40,
-    height: 40,
+    width: 44,
+    height: 44,
     borderRadius: BORDER_RADIUS.sm,
     backgroundColor: COLORS.surface,
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: COLORS.cardBorder,
   },
-  backIcon: { fontSize: 20, color: COLORS.white },
-  title: { fontSize: FONT_SIZES.lg, fontWeight: '800', color: COLORS.white },
+  title: { fontSize: FONT_SIZES.lg, fontWeight: '800', color: COLORS.white, letterSpacing: -0.5 },
   steps: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: SPACING.xl,
     paddingVertical: SPACING.md,
+    marginBottom: SPACING.sm,
   },
   step: {
     width: 28,
@@ -148,58 +154,55 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: COLORS.cardBorder,
   },
-  stepActive: { backgroundColor: COLORS.primary, borderColor: COLORS.primary },
+  stepActive: { backgroundColor: COLORS.white, borderColor: COLORS.white },
   stepNum: { fontSize: FONT_SIZES.xs, fontWeight: '700', color: COLORS.textMuted },
-  stepNumActive: { color: COLORS.white },
-  stepLine: { flex: 1, height: 2, backgroundColor: COLORS.surfaceLight, marginHorizontal: 4 },
-  stepLineActive: { backgroundColor: COLORS.primary },
-  content: { paddingHorizontal: SPACING.xl, paddingBottom: 100 },
+  stepNumActive: { color: COLORS.black },
+  stepLine: { flex: 1, height: 1.5, backgroundColor: COLORS.surfaceLight, marginHorizontal: 4 },
+  stepLineActive: { backgroundColor: COLORS.white },
+  content: { paddingHorizontal: SPACING.xl, paddingBottom: 120 },
   subtitle: { fontSize: FONT_SIZES.base, color: COLORS.textSecondary, marginBottom: SPACING.lg, lineHeight: 22 },
   serviceList: { gap: 12 },
   serviceCard: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: COLORS.surface,
-    borderRadius: BORDER_RADIUS.lg,
+    borderRadius: BORDER_RADIUS.sm,
     padding: SPACING.base,
     borderWidth: 1,
     borderColor: COLORS.cardBorder,
     position: 'relative',
     overflow: 'hidden',
-    ...SHADOWS.sm,
+  },
+  serviceCardSelected: {
+    borderColor: COLORS.white,
+    borderWidth: 1.5,
   },
   serviceIconBg: {
     width: 52,
     height: 52,
-    borderRadius: BORDER_RADIUS.md,
+    borderRadius: BORDER_RADIUS.sm,
+    backgroundColor: COLORS.surfaceLight,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 14,
   },
-  serviceEmoji: { fontSize: 26 },
   serviceInfo: { flex: 1 },
-  serviceName: { fontSize: FONT_SIZES.md, fontWeight: '700', color: COLORS.textPrimary },
-  serviceDesc: { fontSize: FONT_SIZES.xs, color: COLORS.textSecondary, marginTop: 3, lineHeight: 18 },
+  serviceName: { fontSize: FONT_SIZES.base, fontWeight: '800', color: COLORS.white, letterSpacing: -0.3 },
+  serviceDesc: { fontSize: FONT_SIZES.sm, color: COLORS.textSecondary, marginTop: 4, lineHeight: 18 },
   radioOuter: {
     width: 22,
     height: 22,
     borderRadius: 11,
-    borderWidth: 2,
+    borderWidth: 1.5,
     borderColor: COLORS.cardBorder,
     alignItems: 'center',
     justifyContent: 'center',
     marginLeft: 8,
   },
-  radioInner: { width: 10, height: 10, borderRadius: 5 },
-  selectedBadge: {
-    position: 'absolute',
-    top: 10,
-    right: 50,
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: BORDER_RADIUS.full,
+  radioOuterSelected: {
+    borderColor: COLORS.white,
   },
-  selectedBadgeText: { color: COLORS.white, fontSize: 9, fontWeight: '700' },
+  radioInner: { width: 10, height: 10, borderRadius: 5, backgroundColor: COLORS.white },
   footer: {
     position: 'absolute',
     bottom: 0,
@@ -211,13 +214,13 @@ const styles = StyleSheet.create({
     borderTopColor: COLORS.cardBorder,
   },
   nextButton: {
-    backgroundColor: COLORS.primary,
-    borderRadius: BORDER_RADIUS.lg,
+    backgroundColor: COLORS.white,
+    borderRadius: BORDER_RADIUS.sm,
     height: 56,
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    ...SHADOWS.lg,
   },
-  nextButtonDisabled: { backgroundColor: COLORS.surfaceLight },
-  nextButtonText: { color: COLORS.white, fontSize: FONT_SIZES.md, fontWeight: '700' },
+  nextButtonDisabled: { backgroundColor: COLORS.surface, borderWidth: 1, borderColor: COLORS.cardBorder },
+  nextButtonText: { color: COLORS.black, fontSize: FONT_SIZES.base, fontWeight: '800' },
 });

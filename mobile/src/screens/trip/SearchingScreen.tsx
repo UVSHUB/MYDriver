@@ -9,6 +9,7 @@ import {
   Alert,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
+import { Ionicons } from '@expo/vector-icons';
 import { RootState, AppDispatch } from '../../store';
 import { bookingApi } from '../../api';
 import { clearBooking } from '../../store/slices/bookingSlice';
@@ -20,7 +21,7 @@ export default function SearchingScreen({ navigation, route }: any) {
   const dispatch = useDispatch<AppDispatch>();
   const { activeBooking } = useSelector((state: RootState) => state.booking);
 
-  const [status, setStatus] = useState('Searching for nearby drivers...');
+  const [status, setStatus] = useState('Locating nearby drivers...');
   const [isCancelling, setIsCancelling] = useState(false);
 
   // Pulse animation
@@ -34,18 +35,18 @@ export default function SearchingScreen({ navigation, route }: any) {
       Animated.loop(
         Animated.sequence([
           Animated.delay(delay),
-          Animated.timing(anim, { toValue: 1, duration: 1500, easing: Easing.out(Easing.ease), useNativeDriver: true }),
+          Animated.timing(anim, { toValue: 1, duration: 2000, easing: Easing.out(Easing.ease), useNativeDriver: true }),
           Animated.timing(anim, { toValue: 0, duration: 0, useNativeDriver: true }),
         ])
       ).start();
     };
 
     animatePulse(pulse1, 0);
-    animatePulse(pulse2, 500);
-    animatePulse(pulse3, 1000);
+    animatePulse(pulse2, 600);
+    animatePulse(pulse3, 1200);
 
     Animated.loop(
-      Animated.timing(rotate, { toValue: 1, duration: 3000, easing: Easing.linear, useNativeDriver: true })
+      Animated.timing(rotate, { toValue: 1, duration: 4000, easing: Easing.linear, useNativeDriver: true })
     ).start();
 
     // Poll for driver match (in production this uses Socket.io)
@@ -64,9 +65,9 @@ export default function SearchingScreen({ navigation, route }: any) {
     }, 5000);
 
     const statusMessages = [
-      'Searching for nearby drivers...',
-      'Contacting available drivers...',
-      'Almost there...',
+      'Matching with drivers...',
+      'Assigning high-rated partner...',
+      'Confirming trip dispatch...',
     ];
     let msgIndex = 0;
     const msgInterval = setInterval(() => {
@@ -81,10 +82,10 @@ export default function SearchingScreen({ navigation, route }: any) {
   }, []);
 
   const handleCancel = async () => {
-    Alert.alert('Cancel Booking', 'Are you sure you want to cancel?', [
-      { text: 'No', style: 'cancel' },
+    Alert.alert('Cancel Dispatch', 'Are you sure you want to cancel your ride request?', [
+      { text: 'No, Keep Waiting', style: 'cancel' },
       {
-        text: 'Yes, Cancel',
+        text: 'Yes, Cancel Request',
         style: 'destructive',
         onPress: async () => {
           setIsCancelling(true);
@@ -118,26 +119,26 @@ export default function SearchingScreen({ navigation, route }: any) {
             style={[
               styles.pulseRing,
               {
-                opacity: anim.interpolate({ inputRange: [0, 0.5, 1], outputRange: [0.4, 0.1, 0] }),
-                transform: [{ scale: anim.interpolate({ inputRange: [0, 1], outputRange: [0.5, 2.5] }) }],
+                opacity: anim.interpolate({ inputRange: [0, 0.4, 1], outputRange: [0.6, 0.15, 0] }),
+                transform: [{ scale: anim.interpolate({ inputRange: [0, 1], outputRange: [0.6, 2.8] }) }],
               },
             ]}
           />
         ))}
         {/* Center icon */}
         <Animated.View style={[styles.centerIcon, { transform: [{ rotate: rotateInterpolate }] }]}>
-          <Text style={styles.centerEmoji}>🚗</Text>
+          <Ionicons name="car-outline" size={36} color={COLORS.black} />
         </Animated.View>
       </View>
 
       {/* Status */}
       <Text style={styles.statusText}>{status}</Text>
-      <Text style={styles.subStatusText}>Please wait while we find the best driver for you</Text>
+      <Text style={styles.subStatusText}>Finding the nearest executive driver to pick you up.</Text>
 
       {/* Estimated wait */}
       <View style={styles.waitCard}>
-        <Text style={styles.waitLabel}>Estimated Wait</Text>
-        <Text style={styles.waitTime}>3 - 7 minutes</Text>
+        <Text style={styles.waitLabel}>ESTIMATED WAIT TIME</Text>
+        <Text style={styles.waitTime}>3 - 6 mins</Text>
       </View>
 
       {/* Cancel */}
@@ -145,8 +146,9 @@ export default function SearchingScreen({ navigation, route }: any) {
         style={styles.cancelButton}
         onPress={handleCancel}
         disabled={isCancelling}
+        activeOpacity={0.8}
       >
-        <Text style={styles.cancelText}>{isCancelling ? 'Cancelling...' : 'Cancel Booking'}</Text>
+        <Text style={styles.cancelText}>{isCancelling ? 'Cancelling...' : 'Cancel Request'}</Text>
       </TouchableOpacity>
     </View>
   );
@@ -161,61 +163,79 @@ const styles = StyleSheet.create({
     paddingHorizontal: SPACING.xl,
   },
   pulseContainer: {
-    width: 180,
-    height: 180,
+    width: 200,
+    height: 200,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: SPACING['2xl'],
+    marginBottom: SPACING['3xl'],
   },
   pulseRing: {
     position: 'absolute',
     width: 180,
     height: 180,
     borderRadius: 90,
-    backgroundColor: COLORS.primary,
+    backgroundColor: COLORS.white, // Sleek white pulse
   },
   centerIcon: {
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: COLORS.primary,
+    backgroundColor: COLORS.white,
     alignItems: 'center',
     justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
   },
-  centerEmoji: { fontSize: 36 },
   statusText: {
     fontSize: FONT_SIZES.xl,
     fontWeight: '800',
     color: COLORS.white,
     textAlign: 'center',
     marginBottom: 8,
+    letterSpacing: -0.5,
   },
   subStatusText: {
     fontSize: FONT_SIZES.base,
     color: COLORS.textSecondary,
     textAlign: 'center',
     lineHeight: 22,
-    marginBottom: SPACING['2xl'],
+    marginBottom: SPACING['3xl'],
   },
   waitCard: {
     backgroundColor: COLORS.surface,
-    borderRadius: BORDER_RADIUS.lg,
+    borderRadius: BORDER_RADIUS.sm,
     padding: SPACING.base,
     alignItems: 'center',
     borderWidth: 1,
     borderColor: COLORS.cardBorder,
     width: '100%',
-    marginBottom: SPACING.lg,
+    marginBottom: SPACING.xl,
   },
-  waitLabel: { fontSize: FONT_SIZES.sm, color: COLORS.textSecondary, marginBottom: 4 },
-  waitTime: { fontSize: FONT_SIZES['2xl'], fontWeight: '800', color: COLORS.primary },
+  waitLabel: {
+    fontSize: 9,
+    color: COLORS.textMuted,
+    fontWeight: '700',
+    letterSpacing: 1,
+    marginBottom: 6,
+  },
+  waitTime: { fontSize: FONT_SIZES['2xl'], fontWeight: '800', color: COLORS.white, letterSpacing: -0.5 },
   cancelButton: {
-    paddingVertical: 14,
-    paddingHorizontal: SPACING['2xl'],
+    height: 56,
+    borderWidth: 1,
+    borderColor: COLORS.cardBorder,
+    backgroundColor: COLORS.surface,
+    borderRadius: BORDER_RADIUS.sm,
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   cancelText: {
     color: COLORS.error,
     fontSize: FONT_SIZES.base,
-    fontWeight: '700',
+    fontWeight: '800',
+    letterSpacing: -0.2,
   },
 });

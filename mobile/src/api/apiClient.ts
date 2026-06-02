@@ -10,9 +10,18 @@ const apiClient = axios.create({
   },
 });
 
-// Request interceptor - attach token
+// Request interceptor - attach token and apply IP override
 apiClient.interceptors.request.use(
   async (config) => {
+    try {
+      const ipOverride = await AsyncStorage.getItem('@api_ip_override');
+      if (ipOverride && ipOverride.trim()) {
+        config.baseURL = `http://${ipOverride.trim()}:5050/api`;
+      }
+    } catch (e) {
+      console.log('Failed to load IP override:', e);
+    }
+
     const token = await AsyncStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN);
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;

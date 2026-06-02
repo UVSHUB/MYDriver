@@ -6,10 +6,10 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
-  Linking,
   ActivityIndicator,
 } from 'react-native';
 import { useSelector } from 'react-redux';
+import { Ionicons } from '@expo/vector-icons';
 import { RootState } from '../../store';
 import { COLORS, FONT_SIZES, SPACING, BORDER_RADIUS, SHADOWS } from '../../constants';
 import { reviewApi } from '../../api';
@@ -31,17 +31,21 @@ export default function RatingScreen({ navigation, route }: any) {
   const driver = activeBooking?.driverId as any;
 
   const CATEGORY_LABELS: Record<string, string> = {
-    drivingSkill: '🚗 Driving Skill',
-    safety: '🛡️ Safety',
-    professionalism: '👔 Professionalism',
-    punctuality: '⏰ Punctuality',
+    drivingSkill: 'Driving Skill',
+    safety: 'Safety & Comfort',
+    professionalism: 'Driver Professionalism',
+    punctuality: 'Punctuality',
   };
 
   const StarRating = ({ value, onSelect, size = 32 }: { value: number; onSelect: (v: number) => void; size?: number }) => (
-    <View style={{ flexDirection: 'row', gap: 4 }}>
+    <View style={{ flexDirection: 'row', gap: 6 }}>
       {[1, 2, 3, 4, 5].map((star) => (
-        <TouchableOpacity key={star} onPress={() => onSelect(star)}>
-          <Text style={{ fontSize: size, color: star <= value ? COLORS.star : COLORS.surfaceLight }}>★</Text>
+        <TouchableOpacity key={star} onPress={() => onSelect(star)} activeOpacity={0.7}>
+          <Ionicons
+            name={star <= value ? "star" : "star-outline"}
+            size={size}
+            color={star <= value ? COLORS.star : COLORS.surfaceLight}
+          />
         </TouchableOpacity>
       ))}
     </View>
@@ -49,7 +53,7 @@ export default function RatingScreen({ navigation, route }: any) {
 
   const handleSubmit = async () => {
     if (overallRating === 0) {
-      Alert.alert('Rate Driver', 'Please give an overall rating.');
+      Alert.alert('Rate Trip', 'Please select an overall rating.');
       return;
     }
     setIsSubmitting(true);
@@ -65,7 +69,7 @@ export default function RatingScreen({ navigation, route }: any) {
         },
         comment,
       });
-      Alert.alert('Thank You! 🎉', 'Your review has been submitted.', [
+      Alert.alert('Review Submitted 🎉', 'Thank you for your valuable feedback!', [
         { text: 'Done', onPress: () => navigation.navigate('Main') },
       ]);
     } catch {
@@ -76,12 +80,12 @@ export default function RatingScreen({ navigation, route }: any) {
   };
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+    <ScrollView style={styles.container} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.emoji}>⭐</Text>
+        <Ionicons name="star" size={54} color={COLORS.star} style={{ marginBottom: SPACING.sm }} />
         <Text style={styles.title}>Rate Your Trip</Text>
-        <Text style={styles.subtitle}>How was your experience?</Text>
+        <Text style={styles.subtitle}>Your feedback helps maintain executive standards.</Text>
       </View>
 
       {/* Driver Card */}
@@ -101,26 +105,26 @@ export default function RatingScreen({ navigation, route }: any) {
 
       {/* Overall Rating */}
       <View style={styles.overallSection}>
-        <Text style={styles.overallLabel}>Overall Rating</Text>
-        <StarRating value={overallRating} onSelect={setOverallRating} size={44} />
+        <Text style={styles.overallLabel}>OVERALL RATING</Text>
+        <StarRating value={overallRating} onSelect={setOverallRating} size={42} />
         <Text style={styles.ratingDesc}>
-          {overallRating === 0 ? 'Tap to rate' :
-           overallRating <= 2 ? 'Poor' :
+          {overallRating === 0 ? 'Tap stars to rate' :
+           overallRating <= 2 ? 'Needs Improvement' :
            overallRating === 3 ? 'Average' :
-           overallRating === 4 ? 'Good' : 'Excellent! 🎉'}
+           overallRating === 4 ? 'Very Good' : 'Exceptional Standard!'}
         </Text>
       </View>
 
       {/* Category Ratings */}
       <View style={styles.categoriesCard}>
-        <Text style={styles.categoriesTitle}>Detailed Rating (Optional)</Text>
+        <Text style={styles.categoriesTitle}>DETAILED PERFORMANCE</Text>
         {Object.entries(CATEGORY_LABELS).map(([key, label]) => (
           <View key={key} style={styles.categoryRow}>
             <Text style={styles.categoryLabel}>{label}</Text>
             <StarRating
               value={categories[key as keyof typeof categories]}
               onSelect={(v) => setCategories(prev => ({ ...prev, [key]: v }))}
-              size={24}
+              size={22}
             />
           </View>
         ))}
@@ -128,15 +132,16 @@ export default function RatingScreen({ navigation, route }: any) {
 
       {/* Quick feedback tags */}
       <View style={styles.tagsSection}>
-        <Text style={styles.tagsLabel}>Quick Feedback</Text>
+        <Text style={styles.tagsLabel}>ADD QUICK COMMENT</Text>
         <View style={styles.tagsRow}>
-          {['Great attitude!', 'Safe driver', 'On time', 'Clean vehicle', 'Professional'].map((tag) => (
+          {['Safe driving', 'Punctual arrival', 'Great attitude', 'Clean vehicle', 'Professional conduct'].map((tag) => (
             <TouchableOpacity
               key={tag}
               style={[styles.tag, comment.includes(tag) && styles.tagActive]}
               onPress={() => setComment(prev =>
                 prev.includes(tag) ? prev.replace(tag, '').trim() : `${prev} ${tag}`.trim()
               )}
+              activeOpacity={0.8}
             >
               <Text style={[styles.tagText, comment.includes(tag) && styles.tagTextActive]}>
                 {tag}
@@ -147,37 +152,39 @@ export default function RatingScreen({ navigation, route }: any) {
       </View>
 
       {/* Buttons */}
-      <TouchableOpacity
-        style={[styles.submitButton, isSubmitting && { opacity: 0.7 }]}
-        onPress={handleSubmit}
-        disabled={isSubmitting}
-      >
-        {isSubmitting ? (
-          <ActivityIndicator color={COLORS.white} />
-        ) : (
-          <Text style={styles.submitText}>Submit Review</Text>
-        )}
-      </TouchableOpacity>
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity
+          style={[styles.submitButton, isSubmitting && { opacity: 0.7 }]}
+          onPress={handleSubmit}
+          disabled={isSubmitting}
+          activeOpacity={0.9}
+        >
+          {isSubmitting ? (
+            <ActivityIndicator color={COLORS.black} />
+          ) : (
+            <Text style={styles.submitText}>Submit Review</Text>
+          )}
+        </TouchableOpacity>
 
-      <TouchableOpacity onPress={() => navigation.navigate('Main')} style={styles.skipButton}>
-        <Text style={styles.skipText}>Skip for now</Text>
-      </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('Main')} style={styles.skipButton} activeOpacity={0.7}>
+          <Text style={styles.skipText}>Skip feedback</Text>
+        </TouchableOpacity>
+      </View>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.background },
-  content: { paddingHorizontal: SPACING.xl, paddingTop: 60, paddingBottom: 40, gap: 20 },
-  header: { alignItems: 'center', gap: 8 },
-  emoji: { fontSize: 52 },
-  title: { fontSize: FONT_SIZES['2xl'], fontWeight: '800', color: COLORS.white },
-  subtitle: { fontSize: FONT_SIZES.base, color: COLORS.textSecondary },
+  content: { paddingHorizontal: SPACING.xl, paddingTop: 64, paddingBottom: 40, gap: 20 },
+  header: { alignItems: 'center', gap: 4, marginBottom: SPACING.md },
+  title: { fontSize: FONT_SIZES['2xl'], fontWeight: '800', color: COLORS.white, letterSpacing: -0.5 },
+  subtitle: { fontSize: FONT_SIZES.sm, color: COLORS.textSecondary, textAlign: 'center' },
   driverCard: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: COLORS.surface,
-    borderRadius: BORDER_RADIUS.lg,
+    borderRadius: BORDER_RADIUS.sm,
     padding: SPACING.base,
     gap: 14,
     borderWidth: 1,
@@ -185,35 +192,35 @@ const styles = StyleSheet.create({
   },
   driverAvatar: {
     width: 52, height: 52, borderRadius: 26,
-    backgroundColor: COLORS.primary, alignItems: 'center', justifyContent: 'center',
+    backgroundColor: COLORS.surfaceLight, alignItems: 'center', justifyContent: 'center',
   },
-  driverAvatarText: { fontSize: FONT_SIZES.xl, color: COLORS.white, fontWeight: '700' },
-  driverName: { fontSize: FONT_SIZES.md, fontWeight: '700', color: COLORS.white },
-  driverMeta: { fontSize: FONT_SIZES.sm, color: COLORS.textSecondary, marginTop: 3 },
+  driverAvatarText: { fontSize: FONT_SIZES.lg, color: COLORS.white, fontWeight: '800' },
+  driverName: { fontSize: FONT_SIZES.md, fontWeight: '800', color: COLORS.white },
+  driverMeta: { fontSize: FONT_SIZES.xs, color: COLORS.textSecondary, marginTop: 4 },
   overallSection: {
     alignItems: 'center',
     backgroundColor: COLORS.surface,
-    borderRadius: BORDER_RADIUS.lg,
+    borderRadius: BORDER_RADIUS.sm,
     padding: SPACING.xl,
     gap: 12,
     borderWidth: 1,
     borderColor: COLORS.cardBorder,
   },
-  overallLabel: { fontSize: FONT_SIZES.base, fontWeight: '700', color: COLORS.textSecondary },
-  ratingDesc: { fontSize: FONT_SIZES.lg, fontWeight: '700', color: COLORS.star },
+  overallLabel: { fontSize: 9, fontWeight: '700', color: COLORS.textMuted, letterSpacing: 1 },
+  ratingDesc: { fontSize: FONT_SIZES.base, fontWeight: '800', color: COLORS.white, marginTop: 4 },
   categoriesCard: {
     backgroundColor: COLORS.surface,
-    borderRadius: BORDER_RADIUS.lg,
+    borderRadius: BORDER_RADIUS.sm,
     padding: SPACING.base,
     gap: 14,
     borderWidth: 1,
     borderColor: COLORS.cardBorder,
   },
-  categoriesTitle: { fontSize: FONT_SIZES.sm, fontWeight: '700', color: COLORS.textSecondary },
+  categoriesTitle: { fontSize: 9, fontWeight: '700', color: COLORS.textMuted, letterSpacing: 1 },
   categoryRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  categoryLabel: { fontSize: FONT_SIZES.sm, color: COLORS.textPrimary, fontWeight: '500' },
+  categoryLabel: { fontSize: FONT_SIZES.sm, color: COLORS.white, fontWeight: '600' },
   tagsSection: { gap: 10 },
-  tagsLabel: { fontSize: FONT_SIZES.sm, fontWeight: '700', color: COLORS.textSecondary },
+  tagsLabel: { fontSize: 9, fontWeight: '700', color: COLORS.textMuted, letterSpacing: 1 },
   tagsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   tag: {
     backgroundColor: COLORS.surface,
@@ -223,18 +230,18 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: COLORS.cardBorder,
   },
-  tagActive: { backgroundColor: `${COLORS.primary}20`, borderColor: COLORS.primary },
+  tagActive: { backgroundColor: COLORS.white, borderColor: COLORS.white },
   tagText: { color: COLORS.textSecondary, fontSize: FONT_SIZES.sm, fontWeight: '600' },
-  tagTextActive: { color: COLORS.primary },
+  tagTextActive: { color: COLORS.black },
+  buttonContainer: { gap: 8, marginTop: SPACING.md },
   submitButton: {
-    backgroundColor: COLORS.primary,
-    borderRadius: BORDER_RADIUS.lg,
+    backgroundColor: COLORS.white,
+    borderRadius: BORDER_RADIUS.sm,
     height: 56,
     alignItems: 'center',
     justifyContent: 'center',
-    ...SHADOWS.lg,
   },
-  submitText: { color: COLORS.white, fontSize: FONT_SIZES.md, fontWeight: '700' },
-  skipButton: { alignItems: 'center', paddingVertical: 8 },
-  skipText: { color: COLORS.textSecondary, fontSize: FONT_SIZES.base },
+  submitText: { color: COLORS.black, fontSize: FONT_SIZES.base, fontWeight: '800' },
+  skipButton: { alignItems: 'center', paddingVertical: 12 },
+  skipText: { color: COLORS.textSecondary, fontSize: FONT_SIZES.sm, fontWeight: '600' },
 });
