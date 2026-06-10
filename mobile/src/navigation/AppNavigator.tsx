@@ -30,12 +30,16 @@ import TripSummaryScreen from '../screens/booking/TripSummaryScreen';
 // Trip Screens
 import SearchingScreen from '../screens/trip/SearchingScreen';
 import RatingScreen from '../screens/trip/RatingScreen';
+import BecomeDriverScreen from '../screens/main/BecomeDriverScreen';
+import DriverDashboardScreen from '../screens/trip/DriverDashboardScreen';
+import DriverActiveTripScreen from '../screens/trip/DriverActiveTripScreen';
 import {
   RootStackParamList,
   AuthStackParamList,
   MainTabParamList,
   BookingStackParamList,
   TripStackParamList,
+  DriverStackParamList,
 } from '../types';
 
 const RootStack = createNativeStackNavigator<RootStackParamList>();
@@ -44,6 +48,14 @@ const MainTab = createBottomTabNavigator<MainTabParamList>();
 const BookingStack = createNativeStackNavigator<BookingStackParamList>();
 const TripStack = createNativeStackNavigator<TripStackParamList>();
 const ProfileStack = createNativeStackNavigator<any>();
+const DriverStack = createNativeStackNavigator<DriverStackParamList>();
+
+const DriverNavigator = () => (
+  <DriverStack.Navigator screenOptions={{ headerShown: false }}>
+    <DriverStack.Screen name="Dashboard" component={DriverDashboardScreen} />
+    <DriverStack.Screen name="ActiveTrip" component={DriverActiveTripScreen} />
+  </DriverStack.Navigator>
+);
 
 // ─── Auth Navigator ─────────────────────────────────────────────
 
@@ -88,6 +100,7 @@ const ProfileNavigator = () => (
   <ProfileStack.Navigator screenOptions={{ headerShown: false, animation: 'slide_from_right' }}>
     <ProfileStack.Screen name="ProfileMain" component={ProfileScreen} />
     <ProfileStack.Screen name="EditProfile" component={EditProfileScreen} />
+    <ProfileStack.Screen name="BecomeDriver" component={BecomeDriverScreen} />
     <ProfileStack.Screen name="Vehicles" component={VehiclesScreen} />
     <ProfileStack.Screen name="AddVehicle" component={AddVehicleScreen} />
     <ProfileStack.Screen name="EmergencyContacts" component={EmergencyContactsScreen} />
@@ -178,17 +191,21 @@ const NotificationsScreen = () => <PlaceholderScreen title="Notifications 🔔" 
 // ─── Root Navigator ─────────────────────────────────────────────
 
 export const AppNavigator = () => {
-  const { isAuthenticated } = useSelector((state: RootState) => state.auth);
+  const { isAuthenticated, userMode } = useSelector((state: RootState) => state.auth);
 
   return (
     <NavigationContainer>
       <RootStack.Navigator screenOptions={{ headerShown: false }}>
         <RootStack.Screen name="Splash" component={SplashScreen} />
         {isAuthenticated ? (
-          <>
-            <RootStack.Screen name="Main" component={MainNavigator} />
-            <RootStack.Screen name="TripFlow" component={TripFlowNavigator} options={{ animation: 'slide_from_bottom' }} />
-          </>
+          userMode === 'driver' ? (
+            <RootStack.Screen name="DriverMain" component={DriverNavigator} />
+          ) : (
+            <>
+              <RootStack.Screen name="Main" component={MainNavigator} />
+              <RootStack.Screen name="TripFlow" component={TripFlowNavigator} options={{ animation: 'slide_from_bottom' }} />
+            </>
+          )
         ) : (
           <RootStack.Screen name="Auth" component={AuthNavigator} />
         )}

@@ -31,6 +31,12 @@ export const initializeSocket = (io: SocketServer): void => {
     // Join personal room
     socket.join(`user:${user.userId}`);
 
+    // Join drivers room if driver
+    if (user.role === 'driver') {
+      socket.join('drivers');
+      logger.info(`Driver ${user.userId} joined drivers room`);
+    }
+
     // ─── DRIVER EVENTS ─────────────────────────────────────────
 
     // Driver updates their location

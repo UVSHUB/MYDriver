@@ -10,6 +10,7 @@ const initialState: AuthState = {
   refreshToken: null,
   isLoading: false,
   isAuthenticated: false,
+  userMode: 'customer',
 };
 
 // ─── Async Thunks ──────────────────────────────────────────────
@@ -115,6 +116,9 @@ const authSlice = createSlice({
         state.user = { ...state.user, ...action.payload };
       }
     },
+    setUserMode: (state, action: PayloadAction<'customer' | 'driver'>) => {
+      state.userMode = action.payload;
+    },
   },
   extraReducers: (builder) => {
     // Login
@@ -177,5 +181,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { setUser, setTokens, updateUser } = authSlice.actions;
+export const { setUser, setTokens, updateUser, setUserMode } = authSlice.actions;
 export default authSlice.reducer;

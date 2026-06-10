@@ -39,6 +39,7 @@ connectDB();
 
 // Initialize Socket.io
 initializeSocket(io);
+app.set('io', io);
 
 // ─── MIDDLEWARE ─────────────────────────────────────────────────────
 

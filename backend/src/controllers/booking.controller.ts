@@ -40,7 +40,16 @@ export const createBooking = async (req: AuthRequest, res: Response, next: NextF
       status: 'searching',
     });
 
-    res.status(201).json({ success: true, data: booking });
+    const populatedBooking = await Booking.findById(booking._id)
+      .populate('customerId', 'fullName avatar phone')
+      .populate('vehicleId');
+
+    const io = req.app.get('io');
+    if (io) {
+      io.to('drivers').emit('booking:new-request', { booking: populatedBooking });
+    }
+
+    res.status(201).json({ success: true, data: populatedBooking });
   } catch (error) {
     next(error);
   }

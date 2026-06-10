@@ -43,6 +43,16 @@ export const driverApi = {
     const response = await apiClient.get(`/drivers/${id}`);
     return response.data.data;
   },
+
+  register: async (data: { licenseNumber: string; experience: number; vehicleClasses?: string[] }) => {
+    const response = await apiClient.post('/drivers/register', data);
+    return response.data;
+  },
+
+  updateAvailability: async (isAvailable: boolean) => {
+    const response = await apiClient.put('/drivers/availability', { isAvailable });
+    return response.data.data;
+  },
 };
 
 export const vehicleApi = {

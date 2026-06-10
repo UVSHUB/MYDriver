@@ -19,6 +19,7 @@ export interface AuthState {
   refreshToken: string | null;
   isLoading: boolean;
   isAuthenticated: boolean;
+  userMode: 'customer' | 'driver';
 }
 
 // ─── Vehicle Types ─────────────────────────────────────────────
@@ -176,6 +177,7 @@ export type RootStackParamList = {
   Splash: undefined;
   Auth: undefined;
   Main: undefined;
+  DriverMain: undefined;
   TripFlow: undefined;
 };
 
@@ -217,4 +219,9 @@ export type TripStackParamList = {
   ActiveTrip: { bookingId: string };
   TripCompletion: { bookingId: string };
   Rating: { bookingId: string };
+};
+
+export type DriverStackParamList = {
+  Dashboard: undefined;
+  ActiveTrip: { bookingId: string };
 };

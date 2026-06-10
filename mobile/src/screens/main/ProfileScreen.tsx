@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '../../store';
-import { logoutUser, updateUser } from '../../store/slices/authSlice';
+import { logoutUser, updateUser, setUserMode } from '../../store/slices/authSlice';
 import { userApi } from '../../api';
 import { COLORS, FONT_SIZES, SPACING, BORDER_RADIUS, SHADOWS } from '../../constants';
 
@@ -42,6 +42,9 @@ export default function ProfileScreen({ navigation }: any) {
   };
 
   const MENU_ITEMS = [
+    ...(user?.role === 'driver'
+      ? [{ icon: '🔄', label: 'Switch to Driver Mode', onPress: () => dispatch(setUserMode('driver')) }]
+      : [{ icon: '💼', label: 'Become a Driver', onPress: () => navigation.navigate('BecomeDriver') }]),
     { icon: '🚗', label: 'My Vehicles', onPress: () => navigation.navigate('Vehicles') },
     { icon: '📋', label: 'Booking History', onPress: () => navigation.navigate('Bookings') },
     { icon: '🆘', label: 'Emergency Contacts', onPress: () => navigation.navigate('EmergencyContacts') },
