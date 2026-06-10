@@ -101,13 +101,13 @@ export default function HomeScreen({ navigation }: any) {
         <TouchableOpacity
           style={styles.serviceCard}
           onPress={() => navigation.navigate('BookingFlow', { screen: 'ServiceSelect', params: { preselected: service.id } })}
-          activeOpacity={0.9}
+          activeOpacity={0.8}
         >
           <View style={styles.serviceIconBg}>
             {isMCOIcon ? (
               <MaterialCommunityIcons name={service.iconName as any} size={26} color={COLORS.error} />
             ) : (
-              <Ionicons name={service.iconName as any} size={26} color={COLORS.white} />
+              <Ionicons name={service.iconName as any} size={26} color={COLORS.black} />
             )}
           </View>
           <Text style={styles.serviceTitle}>{service.title}</Text>
@@ -144,11 +144,11 @@ export default function HomeScreen({ navigation }: any) {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor={COLORS.background} />
+      <StatusBar barStyle="dark-content" backgroundColor={COLORS.background} />
 
       <ScrollView
         showsVerticalScrollIndicator={false}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={COLORS.white} />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={COLORS.black} />}
       >
         {/* ─── Header ─────────────────────────────────── */}
         <Animated.View style={[styles.header, { opacity: headerOpacity }]}>
@@ -161,14 +161,14 @@ export default function HomeScreen({ navigation }: any) {
             onPress={() => navigation.navigate('Notifications')}
             activeOpacity={0.8}
           >
-            <Ionicons name="notifications-outline" size={22} color={COLORS.white} />
+            <Ionicons name="notifications-outline" size={22} color={COLORS.black} />
             <View style={styles.notifDot} />
           </TouchableOpacity>
         </Animated.View>
 
         {/* ─── Location Bar ──────────────────────────── */}
         <View style={styles.locationBar}>
-          <Ionicons name="location-sharp" size={18} color={COLORS.white} style={{ marginRight: 8 }} />
+          <Ionicons name="location-sharp" size={18} color={COLORS.black} style={{ marginRight: 8 }} />
           <View style={styles.locationContent}>
             <Text style={styles.locationLabel}>CURRENT LOCATION</Text>
             <Text style={styles.locationText} numberOfLines={1}>
@@ -186,7 +186,7 @@ export default function HomeScreen({ navigation }: any) {
           onPress={() => navigation.navigate('BookingFlow', { screen: 'ServiceSelect' })}
           activeOpacity={0.9}
         >
-          <Ionicons name="search" size={20} color={COLORS.white} />
+          <Ionicons name="search" size={20} color={COLORS.black} />
           <Text style={styles.searchPlaceholder}>Where to?</Text>
         </TouchableOpacity>
 
@@ -241,13 +241,13 @@ export default function HomeScreen({ navigation }: any) {
             renderItem={({ item }) => (
               <View style={styles.promoCard}>
                 <View style={styles.promoHeader}>
-                  <Ionicons name={item.icon} size={28} color={COLORS.white} />
+                  <Ionicons name={item.icon} size={28} color={COLORS.black} />
                   <Text style={styles.promoTitle}>{item.title}</Text>
                 </View>
                 <Text style={styles.promoSubtitle}>{item.subtitle}</Text>
                 <TouchableOpacity style={styles.promoButton} activeOpacity={0.8}>
                   <Text style={styles.promoButtonText}>Claim Offer</Text>
-                  <Ionicons name="arrow-forward" size={14} color={COLORS.black} style={{ marginLeft: 4 }} />
+                  <Ionicons name="arrow-forward" size={14} color={COLORS.white} style={{ marginLeft: 4 }} />
                 </TouchableOpacity>
               </View>
             )}
@@ -286,22 +286,22 @@ const styles = StyleSheet.create({
   },
   greeting: {
     fontSize: FONT_SIZES.sm,
-    color: COLORS.textSecondary,
+    color: COLORS.textMuted,
     textTransform: 'uppercase',
     letterSpacing: 1.5,
-    fontWeight: '600',
+    fontWeight: '700',
   },
   userName: {
     fontSize: FONT_SIZES['3xl'],
     fontWeight: '800',
-    color: COLORS.white,
+    color: COLORS.textPrimary,
     letterSpacing: -0.8,
     marginTop: 2,
   },
   notifButton: {
     width: 46,
     height: 46,
-    borderRadius: BORDER_RADIUS.sm,
+    borderRadius: BORDER_RADIUS.md,
     backgroundColor: COLORS.surface,
     alignItems: 'center',
     justifyContent: 'center',
@@ -323,7 +323,7 @@ const styles = StyleSheet.create({
     marginHorizontal: SPACING.xl,
     marginBottom: 16,
     backgroundColor: COLORS.surface,
-    borderRadius: BORDER_RADIUS.sm,
+    borderRadius: BORDER_RADIUS.md,
     padding: SPACING.base,
     borderWidth: 1,
     borderColor: COLORS.cardBorder,
@@ -352,16 +352,16 @@ const styles = StyleSheet.create({
     marginHorizontal: SPACING.xl,
     marginBottom: SPACING.xl,
     backgroundColor: COLORS.surface,
-    borderRadius: BORDER_RADIUS.sm,
+    borderRadius: BORDER_RADIUS.md,
     padding: SPACING.base,
     borderWidth: 1,
-    borderColor: COLORS.white, // Ultra high-contrast outline
+    borderColor: COLORS.cardBorder,
     gap: 12,
   },
   searchPlaceholder: {
-    color: COLORS.white,
+    color: COLORS.textMuted,
     fontSize: FONT_SIZES.lg,
-    fontWeight: '700',
+    fontWeight: '600',
     flex: 1,
   },
   section: {
@@ -378,7 +378,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: FONT_SIZES.xl,
     fontWeight: '800',
-    color: COLORS.white,
+    color: COLORS.textPrimary,
     letterSpacing: -0.5,
     marginBottom: SPACING.xs,
   },
@@ -386,7 +386,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    backgroundColor: 'rgba(52, 199, 89, 0.1)',
+    backgroundColor: 'rgba(36, 138, 61, 0.1)',
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: BORDER_RADIUS.sm,
@@ -412,8 +412,8 @@ const styles = StyleSheet.create({
   },
   serviceCard: {
     width: CARD_WIDTH,
-    backgroundColor: COLORS.surface,
-    borderRadius: BORDER_RADIUS.sm,
+    backgroundColor: COLORS.card,
+    borderRadius: BORDER_RADIUS.md,
     padding: SPACING.base,
     borderWidth: 1,
     borderColor: COLORS.cardBorder,
@@ -423,8 +423,8 @@ const styles = StyleSheet.create({
   serviceIconBg: {
     width: 44,
     height: 44,
-    borderRadius: BORDER_RADIUS.sm,
-    backgroundColor: COLORS.surfaceLight,
+    borderRadius: BORDER_RADIUS.md,
+    backgroundColor: COLORS.surface,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 12,
@@ -432,7 +432,7 @@ const styles = StyleSheet.create({
   serviceTitle: {
     fontSize: FONT_SIZES.base,
     fontWeight: '800',
-    color: COLORS.white,
+    color: COLORS.textPrimary,
     letterSpacing: -0.2,
   },
   serviceDesc: {
@@ -443,10 +443,10 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   serviceArrow: {
-    width: 26,
-    height: 26,
-    borderRadius: 13,
-    backgroundColor: COLORS.surfaceLight,
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: COLORS.black,
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 10,
@@ -454,8 +454,8 @@ const styles = StyleSheet.create({
   },
   driverCard: {
     width: 120,
-    backgroundColor: COLORS.surface,
-    borderRadius: BORDER_RADIUS.sm,
+    backgroundColor: COLORS.card,
+    borderRadius: BORDER_RADIUS.md,
     padding: SPACING.base,
     alignItems: 'center',
     borderWidth: 1,
@@ -465,7 +465,7 @@ const styles = StyleSheet.create({
     width: 52,
     height: 52,
     borderRadius: 26,
-    backgroundColor: COLORS.surfaceLight,
+    backgroundColor: COLORS.surface,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 10,
@@ -477,7 +477,7 @@ const styles = StyleSheet.create({
     borderRadius: 26,
   },
   driverAvatarText: {
-    color: COLORS.white,
+    color: COLORS.textPrimary,
     fontSize: FONT_SIZES.lg,
     fontWeight: '800',
   },
@@ -490,12 +490,12 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     backgroundColor: COLORS.success,
     borderWidth: 2,
-    borderColor: COLORS.surface,
+    borderColor: COLORS.background,
   },
   driverName: {
     fontSize: FONT_SIZES.sm,
     fontWeight: '700',
-    color: COLORS.white,
+    color: COLORS.textPrimary,
     marginBottom: 4,
     textAlign: 'center',
   },
@@ -507,12 +507,12 @@ const styles = StyleSheet.create({
   },
   ratingText: {
     fontSize: FONT_SIZES.xs,
-    color: COLORS.white,
+    color: COLORS.textPrimary,
     fontWeight: '800',
   },
   driverExp: {
     fontSize: 10,
-    color: COLORS.textSecondary,
+    color: COLORS.textMuted,
     fontWeight: '600',
   },
   driverTrips: {
@@ -527,8 +527,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: SPACING.xl,
-    backgroundColor: COLORS.surface,
-    borderRadius: BORDER_RADIUS.sm,
+    backgroundColor: COLORS.card,
+    borderRadius: BORDER_RADIUS.md,
     borderWidth: 1,
     borderColor: COLORS.cardBorder,
   },
@@ -539,8 +539,8 @@ const styles = StyleSheet.create({
   },
   promoCard: {
     width: width - SPACING.xl * 2,
-    borderRadius: BORDER_RADIUS.sm,
-    backgroundColor: COLORS.surface,
+    borderRadius: BORDER_RADIUS.md,
+    backgroundColor: COLORS.card,
     borderWidth: 1,
     borderColor: COLORS.cardBorder,
     padding: SPACING.xl,
@@ -555,7 +555,7 @@ const styles = StyleSheet.create({
   promoTitle: {
     fontSize: FONT_SIZES.lg,
     fontWeight: '800',
-    color: COLORS.white,
+    color: COLORS.textPrimary,
     letterSpacing: -0.3,
   },
   promoSubtitle: {
@@ -566,17 +566,17 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   promoButton: {
-    backgroundColor: COLORS.white,
+    backgroundColor: COLORS.black,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 10,
+    paddingHorizontal: 18,
+    paddingVertical: 12,
     borderRadius: BORDER_RADIUS.sm,
     alignSelf: 'flex-start',
   },
   promoButtonText: {
-    color: COLORS.black,
+    color: COLORS.white,
     fontSize: FONT_SIZES.sm,
     fontWeight: '800',
   },
@@ -594,7 +594,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.surfaceLight,
   },
   promoActiveDot: {
-    backgroundColor: COLORS.white,
+    backgroundColor: COLORS.black,
     width: 20,
   },
 });

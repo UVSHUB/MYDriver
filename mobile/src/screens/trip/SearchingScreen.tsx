@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
     width: 180,
     height: 180,
     borderRadius: 90,
-    backgroundColor: COLORS.white, // Sleek white pulse
+    backgroundColor: COLORS.black, // Sleek black pulse
   },
   centerIcon: {
     width: 80,
@@ -183,16 +183,18 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.white,
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: COLORS.cardBorder,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
+    shadowOpacity: 0.15,
     shadowRadius: 8,
     elevation: 6,
   },
   statusText: {
     fontSize: FONT_SIZES.xl,
     fontWeight: '800',
-    color: COLORS.white,
+    color: COLORS.black,
     textAlign: 'center',
     marginBottom: 8,
     letterSpacing: -0.5,
@@ -221,7 +223,7 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
     marginBottom: 6,
   },
-  waitTime: { fontSize: FONT_SIZES['2xl'], fontWeight: '800', color: COLORS.white, letterSpacing: -0.5 },
+  waitTime: { fontSize: FONT_SIZES['2xl'], fontWeight: '800', color: COLORS.black, letterSpacing: -0.5 },
   cancelButton: {
     height: 56,
     borderWidth: 1,

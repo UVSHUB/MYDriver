@@ -1,54 +1,54 @@
 import Constants from 'expo-constants';
 import { NativeModules } from 'react-native';
 
-// App Colors - Premium White & Black Design System (Uber Light)
+// App Colors - Premium Minimalist Black & White Light Theme
 export const COLORS = {
   // Primary Palette (Sleek Black Controls)
   primary: '#000000',
-  primaryLight: '#2C2C2E',
+  primaryLight: '#F5F5F7',
   primaryDark: '#000000',
 
-  // Secondary
+  // Secondary (High-contrast Black Accents)
   secondary: '#000000',
   secondaryLight: '#E5E5EA',
   secondaryDark: '#000000',
 
-  // Stark Light backgrounds (Uber Light Theme)
+  // Background & Surfaces (Uber / Apple Light Theme)
   background: '#FFFFFF',      // Pure clean white background
-  surface: '#F2F2F7',         // Subtle elevated light grey surface
+  surface: '#F5F5F7',         // Subtle elevated light grey surface
   surfaceLight: '#E5E5EA',    // Slate light grey
   card: '#FFFFFF',            // Pure white cards
   cardBorder: '#E5E5EA',      // Elegant hairline card dividers
 
   // Light theme fallback
   backgroundLight: '#FFFFFF',
-  surfaceLightTheme: '#F2F2F7',
+  surfaceLightTheme: '#F5F5F7',
   cardLight: '#FFFFFF',
 
   // High-contrast Stark Typography
   textPrimary: '#000000',     // Stark black text
-  textSecondary: '#555558',   // Deep elegant charcoal grey
+  textSecondary: '#55555C',   // Deep elegant charcoal grey
   textMuted: '#8E8E93',       // Soft muted light grey
   textDark: '#000000',
   textDarkSecondary: '#1C1C1E',
 
-  // Status Colors (Premium flat design)
-  success: '#34C759',
-  warning: '#FF9500',
-  error: '#FF3B30',
-  info: '#007AFF',
+  // Status Colors (Subtle premium design)
+  success: '#248A3D',         // Clean Dark Green
+  warning: '#FF9500',         // Clean Amber
+  error: '#FF3B30',           // Clean Coral Red
+  info: '#007AFF',            // Clean Royal Blue
 
-  // Flat Colors (No gradients for next-level minimalism)
+  // Clean flat gradient simulation
   gradientStart: '#FFFFFF',
-  gradientEnd: '#F2F2F7',
+  gradientEnd: '#F5F5F7',
   gradientBlue: ['#000000', '#2C2C2E'],
-  gradientGreen: ['#34C759', '#248A3D'],
+  gradientGreen: ['#248A3D', '#1B6029'],
   gradientEmergency: ['#FF3B30', '#C62828'],
 
-  // Service Card Accents
+  // Service Card Accents (Strict Black & White with Emergency Red Highlight)
   driveHome: '#000000',
   hireDriver: '#000000',
-  emergency: '#FF3B30',
+  emergency: '#FF3B30',       // Red for safety
   airport: '#000000',
 
   // Rating
@@ -97,11 +97,11 @@ export const SPACING = {
 };
 
 export const BORDER_RADIUS = {
-  sm: 4,     // Sharp, elegant modern corners (not too round)
-  md: 8,
-  lg: 12,
-  xl: 16,
-  '2xl': 20,
+  sm: 10,     // Smooth corners for modern UI elements
+  md: 16,
+  lg: 24,
+  xl: 32,
+  '2xl': 40,
   full: 9999,
 };
 

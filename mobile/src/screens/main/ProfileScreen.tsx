@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
     paddingTop: 60,
     paddingBottom: SPACING.md,
   },
-  headerTitle: { fontSize: FONT_SIZES['2xl'], fontWeight: '800', color: COLORS.white },
+  headerTitle: { fontSize: FONT_SIZES['2xl'], fontWeight: '800', color: COLORS.black },
   editButton: {
     backgroundColor: COLORS.surface,
     borderRadius: BORDER_RADIUS.sm,
@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
     borderColor: COLORS.surface,
   },
   verifiedIcon: { fontSize: 12, color: COLORS.white, fontWeight: '700' },
-  userName: { fontSize: FONT_SIZES.xl, fontWeight: '800', color: COLORS.white, marginBottom: 4 },
+  userName: { fontSize: FONT_SIZES.xl, fontWeight: '800', color: COLORS.black, marginBottom: 4 },
   userPhone: { fontSize: FONT_SIZES.base, color: COLORS.textSecondary, marginBottom: 2 },
   userEmail: { fontSize: FONT_SIZES.sm, color: COLORS.textMuted, marginBottom: SPACING.lg },
   statsRow: {
@@ -205,7 +205,7 @@ const styles = StyleSheet.create({
   },
   stat: { flex: 1, alignItems: 'center', gap: 3 },
   statValue: { fontSize: 22 },
-  statLabel: { fontSize: FONT_SIZES.sm, fontWeight: '800', color: COLORS.white },
+  statLabel: { fontSize: FONT_SIZES.sm, fontWeight: '800', color: COLORS.black },
   statSub: { fontSize: FONT_SIZES.xs, color: COLORS.textMuted },
   statDivider: { width: 1, height: 36, backgroundColor: COLORS.cardBorder },
   menuSection: {

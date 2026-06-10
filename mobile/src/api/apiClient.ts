@@ -17,6 +17,9 @@ apiClient.interceptors.request.use(
       const ipOverride = await AsyncStorage.getItem('@api_ip_override');
       if (ipOverride && ipOverride.trim()) {
         config.baseURL = `http://${ipOverride.trim()}:5050/api`;
+        console.log('[DEBUG] Request Base URL (AsyncStorage Override):', config.baseURL);
+      } else {
+        console.log('[DEBUG] Request Base URL (Default):', config.baseURL);
       }
     } catch (e) {
       console.log('Failed to load IP override:', e);

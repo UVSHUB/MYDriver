@@ -551,6 +551,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: SPACING.xl,
     paddingBottom: 40,
     maxHeight: height * 0.7,
+    borderWidth: 1,
+    borderColor: COLORS.cardBorder,
   },
   modalHandle: {
     width: 36,

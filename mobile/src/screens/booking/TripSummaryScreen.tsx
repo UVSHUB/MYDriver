@@ -61,7 +61,7 @@ export default function TripSummaryScreen({ navigation, route }: any) {
     <View style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton} activeOpacity={0.8}>
-          <Ionicons name="arrow-back" size={22} color={COLORS.white} />
+          <Ionicons name="arrow-back" size={22} color={COLORS.black} />
         </TouchableOpacity>
         <Text style={styles.title}>Trip Summary</Text>
         <View style={{ width: 44 }} />
@@ -71,7 +71,7 @@ export default function TripSummaryScreen({ navigation, route }: any) {
         {/* Service */}
         {service && (
           <View style={styles.serviceChip}>
-            <Ionicons name={service.iconName as any} size={16} color={COLORS.white} />
+            <Ionicons name={service.iconName as any} size={16} color={COLORS.black} />
             <Text style={styles.serviceLabel}>{service.title}</Text>
           </View>
         )}
@@ -138,7 +138,7 @@ export default function TripSummaryScreen({ navigation, route }: any) {
                 onPress={() => setPaymentMethod(pm.id)}
                 activeOpacity={0.85}
               >
-                <Ionicons name={pm.iconName} size={24} color={COLORS.white} style={{ marginRight: 4 }} />
+                <Ionicons name={pm.iconName} size={24} color={COLORS.black} style={{ marginRight: 4 }} />
                 <View style={{ flex: 1 }}>
                   <Text style={styles.paymentLabel}>{pm.label}</Text>
                   <Text style={styles.paymentDesc}>{pm.desc}</Text>
@@ -165,7 +165,7 @@ export default function TripSummaryScreen({ navigation, route }: any) {
           activeOpacity={0.9}
         >
           {isLoading ? (
-            <ActivityIndicator color={COLORS.black} />
+            <ActivityIndicator color={COLORS.white} />
           ) : (
             <Text style={styles.confirmButtonText}>Confirm & Book</Text>
           )}
@@ -190,7 +190,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.surface, alignItems: 'center', justifyContent: 'center',
     borderWidth: 1, borderColor: COLORS.cardBorder,
   },
-  title: { fontSize: FONT_SIZES.lg, fontWeight: '800', color: COLORS.white, letterSpacing: -0.5 },
+  title: { fontSize: FONT_SIZES.lg, fontWeight: '800', color: COLORS.black, letterSpacing: -0.5 },
   content: { paddingHorizontal: SPACING.xl, paddingBottom: 160, gap: 16 },
   serviceChip: {
     flexDirection: 'row',
@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: COLORS.cardBorder,
   },
-  serviceLabel: { fontSize: FONT_SIZES.sm, fontWeight: '700', color: COLORS.white },
+  serviceLabel: { fontSize: FONT_SIZES.sm, fontWeight: '700', color: COLORS.black },
   routeCard: {
     backgroundColor: COLORS.surface,
     borderRadius: BORDER_RADIUS.sm,
@@ -237,7 +237,7 @@ const styles = StyleSheet.create({
     borderColor: COLORS.cardBorder,
   },
   statCard: { flex: 1, alignItems: 'center' },
-  statValue: { fontSize: FONT_SIZES.xl, fontWeight: '800', color: COLORS.white, letterSpacing: -0.5 },
+  statValue: { fontSize: FONT_SIZES.xl, fontWeight: '800', color: COLORS.black, letterSpacing: -0.5 },
   statLabel: { fontSize: FONT_SIZES.xs, color: COLORS.textSecondary, marginTop: 4, fontWeight: '600' },
   statDivider: { width: 1, backgroundColor: COLORS.cardBorder, marginHorizontal: 16 },
   fareCard: {
@@ -251,10 +251,10 @@ const styles = StyleSheet.create({
   fareSectionTitle: { fontSize: 9, fontWeight: '700', color: COLORS.textMuted, letterSpacing: 1, marginBottom: 4 },
   fareRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   fareLabel: { fontSize: FONT_SIZES.base, color: COLORS.textSecondary, fontWeight: '600' },
-  fareValue: { fontSize: FONT_SIZES.base, fontWeight: '700', color: COLORS.white },
+  fareValue: { fontSize: FONT_SIZES.base, fontWeight: '700', color: COLORS.black },
   fareDivider: { height: 1.5, backgroundColor: COLORS.cardBorder },
-  fareTotalLabel: { fontSize: FONT_SIZES.lg, fontWeight: '800', color: COLORS.white },
-  fareTotalValue: { fontSize: FONT_SIZES.xl, fontWeight: '800', color: COLORS.white, letterSpacing: -0.5 },
+  fareTotalLabel: { fontSize: FONT_SIZES.lg, fontWeight: '800', color: COLORS.black },
+  fareTotalValue: { fontSize: FONT_SIZES.xl, fontWeight: '800', color: COLORS.black, letterSpacing: -0.5 },
   paymentSection: { gap: 10 },
   sectionLabel: { fontSize: 9, fontWeight: '700', color: COLORS.textMuted, letterSpacing: 1 },
   paymentOption: {
@@ -267,27 +267,27 @@ const styles = StyleSheet.create({
     borderColor: COLORS.cardBorder,
     gap: 12,
   },
-  paymentOptionActive: { borderColor: COLORS.white, borderWidth: 1.5 },
-  paymentLabel: { fontSize: FONT_SIZES.base, fontWeight: '800', color: COLORS.white },
+  paymentOptionActive: { borderColor: COLORS.black, borderWidth: 1.5 },
+  paymentLabel: { fontSize: FONT_SIZES.base, fontWeight: '800', color: COLORS.black },
   paymentDesc: { fontSize: FONT_SIZES.xs, color: COLORS.textSecondary, marginTop: 2 },
   radioOuter: {
     width: 22, height: 22, borderRadius: 11, borderWidth: 1.5,
     borderColor: COLORS.cardBorder, alignItems: 'center', justifyContent: 'center',
     marginLeft: 8,
   },
-  radioOuterActive: { borderColor: COLORS.white },
-  radioInner: { width: 10, height: 10, borderRadius: 5, backgroundColor: COLORS.white },
+  radioOuterActive: { borderColor: COLORS.black },
+  radioInner: { width: 10, height: 10, borderRadius: 5, backgroundColor: COLORS.black },
   footer: {
     position: 'absolute', bottom: 0, left: 0, right: 0, padding: SPACING.xl,
     backgroundColor: COLORS.background, borderTopWidth: 1, borderTopColor: COLORS.cardBorder, gap: 12,
   },
   totalRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   totalLabel: { fontSize: FONT_SIZES.sm, color: COLORS.textSecondary, fontWeight: '600' },
-  totalAmount: { fontSize: FONT_SIZES.xl, fontWeight: '800', color: COLORS.white, letterSpacing: -0.5 },
+  totalAmount: { fontSize: FONT_SIZES.xl, fontWeight: '800', color: COLORS.black, letterSpacing: -0.5 },
   confirmButton: {
-    backgroundColor: COLORS.white, borderRadius: BORDER_RADIUS.sm,
+    backgroundColor: COLORS.primary, borderRadius: BORDER_RADIUS.sm,
     height: 56, alignItems: 'center', justifyContent: 'center',
   },
   confirmButtonDisabled: { opacity: 0.6 },
-  confirmButtonText: { color: COLORS.black, fontSize: FONT_SIZES.base, fontWeight: '800' },
+  confirmButtonText: { color: COLORS.white, fontSize: FONT_SIZES.base, fontWeight: '800' },
 });

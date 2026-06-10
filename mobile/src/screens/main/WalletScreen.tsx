@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
     paddingTop: 60,
     paddingBottom: SPACING.md,
   },
-  headerTitle: { fontSize: FONT_SIZES['2xl'], fontWeight: '800', color: COLORS.white },
+  headerTitle: { fontSize: FONT_SIZES['2xl'], fontWeight: '800', color: COLORS.black },
   balanceCard: {
     marginHorizontal: SPACING.xl,
     backgroundColor: COLORS.primary,
@@ -197,7 +197,7 @@ const styles = StyleSheet.create({
   actionIcon: { fontSize: 20 },
   actionLabel: { fontSize: FONT_SIZES.xs, color: 'rgba(255,255,255,0.9)', fontWeight: '600' },
   section: { paddingHorizontal: SPACING.xl, marginBottom: SPACING.lg },
-  sectionTitle: { fontSize: FONT_SIZES.lg, fontWeight: '800', color: COLORS.white, marginBottom: SPACING.md },
+  sectionTitle: { fontSize: FONT_SIZES.lg, fontWeight: '800', color: COLORS.black, marginBottom: SPACING.md },
   quickAddRow: { flexDirection: 'row', gap: 10 },
   quickAddChip: {
     flex: 1,

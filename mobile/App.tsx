@@ -8,6 +8,8 @@ import * as Notifications from 'expo-notifications';
 import { Platform, LogBox } from 'react-native';
 import Constants, { ExecutionEnvironment } from 'expo-constants';
 
+import { API_BASE_URL } from './src/constants';
+
 // Mute any notification warnings
 LogBox.ignoreLogs([
   'expo-notifications: Android Push notifications',
@@ -41,6 +43,7 @@ if (!isExpoGo) {
 
 export default function App() {
   useEffect(() => {
+    console.log('[DEBUG] Active API Base URL:', API_BASE_URL);
     if (!isExpoGo) {
       registerForPushNotifications();
     } else {

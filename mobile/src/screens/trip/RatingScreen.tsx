@@ -160,7 +160,7 @@ export default function RatingScreen({ navigation, route }: any) {
           activeOpacity={0.9}
         >
           {isSubmitting ? (
-            <ActivityIndicator color={COLORS.black} />
+            <ActivityIndicator color={COLORS.white} />
           ) : (
             <Text style={styles.submitText}>Submit Review</Text>
           )}
@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.background },
   content: { paddingHorizontal: SPACING.xl, paddingTop: 64, paddingBottom: 40, gap: 20 },
   header: { alignItems: 'center', gap: 4, marginBottom: SPACING.md },
-  title: { fontSize: FONT_SIZES['2xl'], fontWeight: '800', color: COLORS.white, letterSpacing: -0.5 },
+  title: { fontSize: FONT_SIZES['2xl'], fontWeight: '800', color: COLORS.black, letterSpacing: -0.5 },
   subtitle: { fontSize: FONT_SIZES.sm, color: COLORS.textSecondary, textAlign: 'center' },
   driverCard: {
     flexDirection: 'row',
@@ -194,8 +194,8 @@ const styles = StyleSheet.create({
     width: 52, height: 52, borderRadius: 26,
     backgroundColor: COLORS.surfaceLight, alignItems: 'center', justifyContent: 'center',
   },
-  driverAvatarText: { fontSize: FONT_SIZES.lg, color: COLORS.white, fontWeight: '800' },
-  driverName: { fontSize: FONT_SIZES.md, fontWeight: '800', color: COLORS.white },
+  driverAvatarText: { fontSize: FONT_SIZES.lg, color: COLORS.black, fontWeight: '800' },
+  driverName: { fontSize: FONT_SIZES.md, fontWeight: '800', color: COLORS.black },
   driverMeta: { fontSize: FONT_SIZES.xs, color: COLORS.textSecondary, marginTop: 4 },
   overallSection: {
     alignItems: 'center',
@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
     borderColor: COLORS.cardBorder,
   },
   overallLabel: { fontSize: 9, fontWeight: '700', color: COLORS.textMuted, letterSpacing: 1 },
-  ratingDesc: { fontSize: FONT_SIZES.base, fontWeight: '800', color: COLORS.white, marginTop: 4 },
+  ratingDesc: { fontSize: FONT_SIZES.base, fontWeight: '800', color: COLORS.black, marginTop: 4 },
   categoriesCard: {
     backgroundColor: COLORS.surface,
     borderRadius: BORDER_RADIUS.sm,
@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
   },
   categoriesTitle: { fontSize: 9, fontWeight: '700', color: COLORS.textMuted, letterSpacing: 1 },
   categoryRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  categoryLabel: { fontSize: FONT_SIZES.sm, color: COLORS.white, fontWeight: '600' },
+  categoryLabel: { fontSize: FONT_SIZES.sm, color: COLORS.black, fontWeight: '600' },
   tagsSection: { gap: 10 },
   tagsLabel: { fontSize: 9, fontWeight: '700', color: COLORS.textMuted, letterSpacing: 1 },
   tagsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
@@ -230,18 +230,18 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: COLORS.cardBorder,
   },
-  tagActive: { backgroundColor: COLORS.white, borderColor: COLORS.white },
+  tagActive: { backgroundColor: COLORS.black, borderColor: COLORS.black },
   tagText: { color: COLORS.textSecondary, fontSize: FONT_SIZES.sm, fontWeight: '600' },
-  tagTextActive: { color: COLORS.black },
+  tagTextActive: { color: COLORS.white },
   buttonContainer: { gap: 8, marginTop: SPACING.md },
   submitButton: {
-    backgroundColor: COLORS.white,
+    backgroundColor: COLORS.primary,
     borderRadius: BORDER_RADIUS.sm,
     height: 56,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  submitText: { color: COLORS.black, fontSize: FONT_SIZES.base, fontWeight: '800' },
+  submitText: { color: COLORS.white, fontSize: FONT_SIZES.base, fontWeight: '800' },
   skipButton: { alignItems: 'center', paddingVertical: 12 },
   skipText: { color: COLORS.textSecondary, fontSize: FONT_SIZES.sm, fontWeight: '600' },
 });

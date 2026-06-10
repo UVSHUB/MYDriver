@@ -158,7 +158,7 @@ const MainNavigator = () => (
 
 const PlaceholderScreen = ({ title }: { title: string }) => (
   <View style={{ flex: 1, backgroundColor: COLORS.background, alignItems: 'center', justifyContent: 'center' }}>
-    <Text style={{ color: COLORS.white, fontSize: 20, fontWeight: '700' }}>{title}</Text>
+    <Text style={{ color: COLORS.black, fontSize: 20, fontWeight: '700' }}>{title}</Text>
     <Text style={{ color: COLORS.textSecondary, marginTop: 8 }}>Coming soon...</Text>
   </View>
 );

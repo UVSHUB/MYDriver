@@ -35,12 +35,12 @@ export default function ServiceSelectScreen({ navigation }: any) {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" />
+      <StatusBar barStyle="dark-content" backgroundColor={COLORS.background} />
 
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton} activeOpacity={0.8}>
-          <Ionicons name="arrow-back" size={22} color={COLORS.white} />
+          <Ionicons name="arrow-back" size={22} color={COLORS.black} />
         </TouchableOpacity>
         <Text style={styles.title}>Select Service</Text>
         <View style={{ width: 40 }} />
@@ -77,9 +77,9 @@ export default function ServiceSelectScreen({ navigation }: any) {
               >
                 <View style={styles.serviceIconBg}>
                   {isMCOIcon ? (
-                    <MaterialCommunityIcons name={service.iconName as any} size={24} color={isSelected ? COLORS.white : COLORS.error} />
+                    <MaterialCommunityIcons name={service.iconName as any} size={24} color={COLORS.error} />
                   ) : (
-                    <Ionicons name={service.iconName as any} size={24} color={COLORS.white} />
+                    <Ionicons name={service.iconName as any} size={24} color={COLORS.black} />
                   )}
                 </View>
                 <View style={styles.serviceInfo}>
@@ -109,7 +109,7 @@ export default function ServiceSelectScreen({ navigation }: any) {
           activeOpacity={0.9}
         >
           <Text style={styles.nextButtonText}>Continue</Text>
-          <Ionicons name="arrow-forward" size={18} color={selected ? COLORS.black : COLORS.textMuted} style={{ marginLeft: 8 }} />
+          <Ionicons name="arrow-forward" size={18} color={selected ? COLORS.white : COLORS.textMuted} style={{ marginLeft: 8 }} />
         </TouchableOpacity>
       </View>
     </View>
@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: COLORS.cardBorder,
   },
-  title: { fontSize: FONT_SIZES.lg, fontWeight: '800', color: COLORS.white, letterSpacing: -0.5 },
+  title: { fontSize: FONT_SIZES.lg, fontWeight: '800', color: COLORS.black, letterSpacing: -0.5 },
   steps: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -154,11 +154,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: COLORS.cardBorder,
   },
-  stepActive: { backgroundColor: COLORS.white, borderColor: COLORS.white },
+  stepActive: { backgroundColor: COLORS.black, borderColor: COLORS.black },
   stepNum: { fontSize: FONT_SIZES.xs, fontWeight: '700', color: COLORS.textMuted },
-  stepNumActive: { color: COLORS.black },
+  stepNumActive: { color: COLORS.white },
   stepLine: { flex: 1, height: 1.5, backgroundColor: COLORS.surfaceLight, marginHorizontal: 4 },
-  stepLineActive: { backgroundColor: COLORS.white },
+  stepLineActive: { backgroundColor: COLORS.black },
   content: { paddingHorizontal: SPACING.xl, paddingBottom: 120 },
   subtitle: { fontSize: FONT_SIZES.base, color: COLORS.textSecondary, marginBottom: SPACING.lg, lineHeight: 22 },
   serviceList: { gap: 12 },
@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   serviceCardSelected: {
-    borderColor: COLORS.white,
+    borderColor: COLORS.black,
     borderWidth: 1.5,
   },
   serviceIconBg: {
@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
     marginRight: 14,
   },
   serviceInfo: { flex: 1 },
-  serviceName: { fontSize: FONT_SIZES.base, fontWeight: '800', color: COLORS.white, letterSpacing: -0.3 },
+  serviceName: { fontSize: FONT_SIZES.base, fontWeight: '800', color: COLORS.black, letterSpacing: -0.3 },
   serviceDesc: { fontSize: FONT_SIZES.sm, color: COLORS.textSecondary, marginTop: 4, lineHeight: 18 },
   radioOuter: {
     width: 22,
@@ -200,9 +200,9 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   radioOuterSelected: {
-    borderColor: COLORS.white,
+    borderColor: COLORS.black,
   },
-  radioInner: { width: 10, height: 10, borderRadius: 5, backgroundColor: COLORS.white },
+  radioInner: { width: 10, height: 10, borderRadius: 5, backgroundColor: COLORS.black },
   footer: {
     position: 'absolute',
     bottom: 0,
@@ -214,7 +214,7 @@ const styles = StyleSheet.create({
     borderTopColor: COLORS.cardBorder,
   },
   nextButton: {
-    backgroundColor: COLORS.white,
+    backgroundColor: COLORS.primary,
     borderRadius: BORDER_RADIUS.sm,
     height: 56,
     flexDirection: 'row',
@@ -222,5 +222,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   nextButtonDisabled: { backgroundColor: COLORS.surface, borderWidth: 1, borderColor: COLORS.cardBorder },
-  nextButtonText: { color: COLORS.black, fontSize: FONT_SIZES.base, fontWeight: '800' },
+  nextButtonText: { color: COLORS.white, fontSize: FONT_SIZES.base, fontWeight: '800' },
 });

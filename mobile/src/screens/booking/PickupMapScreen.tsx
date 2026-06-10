@@ -115,7 +115,7 @@ export default function PickupMapScreen({ navigation, route }: any) {
           onRegionChangeComplete={handleRegionChange}
           showsUserLocation
           showsMyLocationButton={false}
-          customMapStyle={darkMapStyle}
+          customMapStyle={lightMapStyle}
         />
       )}
 
@@ -153,12 +153,12 @@ export default function PickupMapScreen({ navigation, route }: any) {
   );
 }
 
-const darkMapStyle = [
-  { elementType: 'geometry', stylers: [{ color: '#1e293b' }] },
-  { elementType: 'labels.text.stroke', stylers: [{ color: '#0f172a' }] },
-  { elementType: 'labels.text.fill', stylers: [{ color: '#94a3b8' }] },
-  { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#334155' }] },
-  { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#0f172a' }] },
+const lightMapStyle = [
+  { elementType: 'geometry', stylers: [{ color: '#f5f5f5' }] },
+  { elementType: 'labels.text.stroke', stylers: [{ color: '#ffffff' }] },
+  { elementType: 'labels.text.fill', stylers: [{ color: '#616161' }] },
+  { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#ffffff' }] },
+  { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#e9e9e9' }] },
 ];
 
 const styles = StyleSheet.create({
@@ -174,7 +174,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: SPACING.xl,
     paddingTop: 60,
     paddingBottom: SPACING.md,
-    backgroundColor: 'rgba(15, 23, 42, 0.9)',
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.cardBorder,
     gap: 12,
   },
   backButton: {
@@ -185,8 +187,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  backIcon: { fontSize: 20, color: COLORS.white },
-  headerTitle: { fontSize: FONT_SIZES.lg, fontWeight: '700', color: COLORS.white },
+  backIcon: { fontSize: 20, color: COLORS.black },
+  headerTitle: { fontSize: FONT_SIZES.lg, fontWeight: '700', color: COLORS.textPrimary },
   map: { flex: 1 },
   loadingContainer: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 16 },
   loadingText: { color: COLORS.textSecondary, fontSize: FONT_SIZES.base },

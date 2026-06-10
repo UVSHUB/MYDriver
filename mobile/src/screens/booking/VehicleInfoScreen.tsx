@@ -188,8 +188,8 @@ const styles = StyleSheet.create({
     width: 40, height: 40, borderRadius: BORDER_RADIUS.sm,
     backgroundColor: COLORS.surface, alignItems: 'center', justifyContent: 'center',
   },
-  backIcon: { fontSize: 20, color: COLORS.white },
-  title: { fontSize: FONT_SIZES.lg, fontWeight: '800', color: COLORS.white },
+  backIcon: { fontSize: 20, color: COLORS.black },
+  title: { fontSize: FONT_SIZES.lg, fontWeight: '800', color: COLORS.textPrimary },
   addButton: {
     backgroundColor: COLORS.primary, borderRadius: BORDER_RADIUS.sm,
     paddingHorizontal: 14, paddingVertical: 8,

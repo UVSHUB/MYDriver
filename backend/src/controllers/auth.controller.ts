@@ -7,7 +7,7 @@ import {
   generateOTP,
   getOTPExpiry,
 } from '../utils/helpers';
-import { sendOTPSMS } from '../services/otp.service';
+import { sendOTPSMS, sendOTPEmail } from '../services/otp.service';
 import jwt from 'jsonwebtoken';
 
 // POST /api/auth/register
@@ -33,6 +33,7 @@ export const register = async (req: Request, res: Response, next: NextFunction):
     });
 
     await sendOTPSMS(phone, otp);
+    await sendOTPEmail(email, otp);
 
     res.status(201).json({
       success: true,
@@ -92,6 +93,7 @@ export const resendOTP = async (req: Request, res: Response, next: NextFunction)
     await user.save({ validateBeforeSave: false });
 
     await sendOTPSMS(user.phone, otp);
+    await sendOTPEmail(user.email, otp);
 
     res.status(200).json({
       success: true,
@@ -120,6 +122,7 @@ export const login = async (req: Request, res: Response, next: NextFunction): Pr
       user.otpExpiry = getOTPExpiry();
       await user.save({ validateBeforeSave: false });
       await sendOTPSMS(user.phone, otp);
+      await sendOTPEmail(user.email, otp);
 
       res.status(403).json({
         success: false,
@@ -157,6 +160,7 @@ export const loginWithPhone = async (req: Request, res: Response, next: NextFunc
     await user.save({ validateBeforeSave: false });
 
     await sendOTPSMS(phone, otp);
+    await sendOTPEmail(user.email, otp);
 
     res.status(200).json({
       success: true,
@@ -210,6 +214,7 @@ export const forgotPassword = async (req: Request, res: Response, next: NextFunc
     await user.save({ validateBeforeSave: false });
 
     await sendOTPSMS(phone, otp);
+    await sendOTPEmail(user.email, otp);
 
     res.status(200).json({
       success: true,

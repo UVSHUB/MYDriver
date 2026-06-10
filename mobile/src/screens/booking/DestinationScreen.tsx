@@ -124,8 +124,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  backIcon: { fontSize: 20, color: COLORS.white },
-  title: { fontSize: FONT_SIZES.lg, fontWeight: '800', color: COLORS.white },
+  backIcon: { fontSize: 20, color: COLORS.black },
+  title: { fontSize: FONT_SIZES.lg, fontWeight: '800', color: COLORS.textPrimary },
   autocompleteContainer: {
     paddingHorizontal: SPACING.xl,
     zIndex: 10,
