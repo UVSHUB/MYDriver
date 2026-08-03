@@ -9,6 +9,7 @@ import {
 } from '../utils/helpers';
 import { sendOTPSMS, sendOTPEmail } from '../services/otp.service';
 import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
 
 // POST /api/auth/register
 export const register = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -63,7 +64,7 @@ export const verifyOTP = async (req: Request, res: Response, next: NextFunction)
     user.otpExpiry = undefined;
     await user.save({ validateBeforeSave: false });
 
-    const accessToken = generateAccessToken(user._id.toString());
+    const accessToken = generateAccessToken(user._id.toString(), user.role);
     const refreshToken = generateRefreshToken(user._id.toString());
 
     res.status(200).json({
@@ -132,7 +133,7 @@ export const login = async (req: Request, res: Response, next: NextFunction): Pr
       return;
     }
 
-    const accessToken = generateAccessToken(user._id.toString());
+    const accessToken = generateAccessToken(user._id.toString(), user.role);
     const refreshToken = generateRefreshToken(user._id.toString());
 
     res.status(200).json({
@@ -187,7 +188,7 @@ export const verifyPhoneLogin = async (req: Request, res: Response, next: NextFu
     user.otpExpiry = undefined;
     await user.save({ validateBeforeSave: false });
 
-    const accessToken = generateAccessToken(user._id.toString());
+    const accessToken = generateAccessToken(user._id.toString(), user.role);
     const refreshToken = generateRefreshToken(user._id.toString());
 
     res.status(200).json({
@@ -257,7 +258,7 @@ export const refreshToken = async (req: Request, res: Response, next: NextFuncti
     const user = await User.findById(decoded.id);
     if (!user || !user.isActive) throw new AppError('Invalid refresh token.', 401);
 
-    const accessToken = generateAccessToken(user._id.toString());
+    const accessToken = generateAccessToken(user._id.toString(), user.role);
     const newRefreshToken = generateRefreshToken(user._id.toString());
 
     res.status(200).json({
@@ -288,7 +289,7 @@ export const googleLogin = async (req: Request, res: Response, next: NextFunctio
       const uniquePhone = `+1555${Date.now().toString().slice(-7)}${Math.floor(10 + Math.random() * 90)}`;
       
       // Generate a highly secure password guaranteed to be > 8 characters
-      const securePassword = `Google_${Math.random().toString(36).substring(2, 15)}_${Date.now()}`;
+      const securePassword = `Google_${crypto.randomBytes(16).toString('hex')}`;
 
       user = await User.create({
         fullName: fullName || email.split('@')[0],
@@ -300,7 +301,7 @@ export const googleLogin = async (req: Request, res: Response, next: NextFunctio
       });
     }
 
-    const accessToken = generateAccessToken(user._id.toString());
+    const accessToken = generateAccessToken(user._id.toString(), user.role);
     const refreshToken = generateRefreshToken(user._id.toString());
 
     res.status(200).json({

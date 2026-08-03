@@ -14,11 +14,20 @@ import WelcomeScreen from '../screens/auth/WelcomeScreen';
 import RegisterScreen from '../screens/auth/RegisterScreen';
 import OTPVerificationScreen from '../screens/auth/OTPVerificationScreen';
 import LoginScreen from '../screens/auth/LoginScreen';
+import ForgotPasswordScreen from '../screens/auth/ForgotPasswordScreen';
+import ResetPasswordScreen from '../screens/auth/ResetPasswordScreen';
 
 // Main Screens
 import HomeScreen from '../screens/main/HomeScreen';
 import ProfileScreen from '../screens/main/ProfileScreen';
 import WalletScreen from '../screens/main/WalletScreen';
+import EditProfileScreen from '../screens/main/EditProfileScreen';
+import VehiclesScreen from '../screens/main/VehiclesScreen';
+import AddVehicleScreen from '../screens/main/AddVehicleScreen';
+import EmergencyContactsScreen from '../screens/main/EmergencyContactsScreen';
+import SettingsScreen from '../screens/main/SettingsScreen';
+import NotificationsScreen from '../screens/main/NotificationsScreen';
+import BecomeDriverScreen from '../screens/main/BecomeDriverScreen';
 
 // Booking Screens
 import ServiceSelectScreen from '../screens/booking/ServiceSelectScreen';
@@ -29,8 +38,10 @@ import TripSummaryScreen from '../screens/booking/TripSummaryScreen';
 
 // Trip Screens
 import SearchingScreen from '../screens/trip/SearchingScreen';
+import DriverMatchedScreen from '../screens/trip/DriverMatchedScreen';
+import LiveTrackingScreen from '../screens/trip/LiveTrackingScreen';
+import TripCompletionScreen from '../screens/trip/TripCompletionScreen';
 import RatingScreen from '../screens/trip/RatingScreen';
-import BecomeDriverScreen from '../screens/main/BecomeDriverScreen';
 import DriverDashboardScreen from '../screens/trip/DriverDashboardScreen';
 import DriverActiveTripScreen from '../screens/trip/DriverActiveTripScreen';
 import {
@@ -167,26 +178,7 @@ const MainNavigator = () => (
   </MainTab.Navigator>
 );
 
-// ─── Placeholder Screens ─────────────────────────────────────────
 
-const PlaceholderScreen = ({ title }: { title: string }) => (
-  <View style={{ flex: 1, backgroundColor: COLORS.background, alignItems: 'center', justifyContent: 'center' }}>
-    <Text style={{ color: COLORS.black, fontSize: 20, fontWeight: '700' }}>{title}</Text>
-    <Text style={{ color: COLORS.textSecondary, marginTop: 8 }}>Coming soon...</Text>
-  </View>
-);
-
-const ForgotPasswordScreen = () => <PlaceholderScreen title="Forgot Password" />;
-const ResetPasswordScreen = () => <PlaceholderScreen title="Reset Password" />;
-const DriverMatchedScreen = () => <PlaceholderScreen title="Driver Matched! 🎉" />;
-const LiveTrackingScreen = () => <PlaceholderScreen title="Live Tracking 📍" />;
-const TripCompletionScreen = () => <PlaceholderScreen title="Trip Complete ✅" />;
-const EditProfileScreen = () => <PlaceholderScreen title="Edit Profile" />;
-const VehiclesScreen = () => <PlaceholderScreen title="My Vehicles 🚗" />;
-const AddVehicleScreen = () => <PlaceholderScreen title="Add Vehicle +" />;
-const EmergencyContactsScreen = () => <PlaceholderScreen title="Emergency Contacts 🆘" />;
-const SettingsScreen = () => <PlaceholderScreen title="Settings ⚙️" />;
-const NotificationsScreen = () => <PlaceholderScreen title="Notifications 🔔" />;
 
 // ─── Root Navigator ─────────────────────────────────────────────
 

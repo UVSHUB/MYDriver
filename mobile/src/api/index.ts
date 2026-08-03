@@ -1,6 +1,8 @@
 import apiClient from './apiClient';
 import { Booking, ServiceType, Location } from '../types';
 
+export * from './auth.api';
+
 export const bookingApi = {
   create: async (data: {
     vehicleId: string;
@@ -101,6 +103,8 @@ export const userApi = {
 
   updateProfile: async (data: {
     fullName?: string;
+    email?: string;
+    phone?: string;
     language?: string;
     darkMode?: boolean;
     pushToken?: string;

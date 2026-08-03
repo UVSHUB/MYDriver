@@ -16,8 +16,10 @@ export const initializeSocket = (io: SocketServer): void => {
     try {
       const token = socket.handshake.auth.token;
       if (!token) throw new Error('No token');
-      const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as SocketUser;
-      (socket as any).user = decoded;
+      const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as any;
+      const userId = decoded.userId || decoded.id;
+      const role = decoded.role || 'customer';
+      (socket as any).user = { userId, role };
       next();
     } catch (err) {
       next(new Error('Socket authentication failed'));

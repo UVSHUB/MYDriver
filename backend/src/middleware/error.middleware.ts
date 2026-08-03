@@ -22,7 +22,8 @@ export const errorHandler = (
     errors = err.message;
   } else if ((err as any).code === 11000) {
     statusCode = 409;
-    const field = Object.keys((err as any).keyValue)[0];
+    const keyValue = (err as any).keyValue || (err as any).keyPattern;
+    const field = keyValue ? Object.keys(keyValue)[0] : 'Record';
     message = `${field.charAt(0).toUpperCase() + field.slice(1)} already exists.`;
   } else if (err.name === 'CastError') {
     statusCode = 400;
