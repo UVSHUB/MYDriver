@@ -1,33 +1,33 @@
 import Constants from 'expo-constants';
 import { NativeModules } from 'react-native';
 
-// App Colors - Premium Minimalist Black & White Light Theme
+// App Colors - Premium Dark Orange Theme
 export const COLORS = {
-  // Primary Palette (Sleek Black Controls)
-  primary: '#000000',
-  primaryLight: '#F5F5F7',
-  primaryDark: '#000000',
+  // Primary Palette (Vibrant Dark Orange Controls)
+  primary: '#E65100',
+  primaryLight: '#FFF3E0',
+  primaryDark: '#BF360C',
 
-  // Secondary (High-contrast Black Accents)
-  secondary: '#000000',
-  secondaryLight: '#E5E5EA',
-  secondaryDark: '#000000',
+  // Secondary (Vibrant Accent Colors)
+  secondary: '#FF6D00',
+  secondaryLight: '#FFE0B2',
+  secondaryDark: '#B53D00',
 
-  // Background & Surfaces (Uber / Apple Light Theme)
+  // Background & Surfaces
   background: '#FFFFFF',      // Pure clean white background
-  surface: '#F5F5F7',         // Subtle elevated light grey surface
-  surfaceLight: '#E5E5EA',    // Slate light grey
+  surface: '#FFF3E0',         // Soft peach-orange surface
+  surfaceLight: '#FFE0B2',    // Light peach surface
   card: '#FFFFFF',            // Pure white cards
-  cardBorder: '#E5E5EA',      // Elegant hairline card dividers
+  cardBorder: '#FFE0B2',      // Hairline orange-peach dividers
 
   // Light theme fallback
   backgroundLight: '#FFFFFF',
-  surfaceLightTheme: '#F5F5F7',
+  surfaceLightTheme: '#FFF3E0',
   cardLight: '#FFFFFF',
 
-  // High-contrast Stark Typography
+  // Typography
   textPrimary: '#000000',     // Stark black text
-  textSecondary: '#55555C',   // Deep elegant charcoal grey
+  textSecondary: '#55555C',   // Charcoal grey
   textMuted: '#8E8E93',       // Soft muted light grey
   textDark: '#000000',
   textDarkSecondary: '#1C1C1E',
@@ -40,16 +40,16 @@ export const COLORS = {
 
   // Clean flat gradient simulation
   gradientStart: '#FFFFFF',
-  gradientEnd: '#F5F5F7',
-  gradientBlue: ['#000000', '#2C2C2E'],
+  gradientEnd: '#FFF3E0',
+  gradientBlue: ['#E65100', '#FF8F00'],
   gradientGreen: ['#248A3D', '#1B6029'],
   gradientEmergency: ['#FF3B30', '#C62828'],
 
-  // Service Card Accents (Strict Black & White with Emergency Red Highlight)
-  driveHome: '#000000',
-  hireDriver: '#000000',
+  // Service Card Accents
+  driveHome: '#E65100',
+  hireDriver: '#E65100',
   emergency: '#FF3B30',       // Red for safety
-  airport: '#000000',
+  airport: '#E65100',
 
   // Rating
   star: '#FFCC00',

@@ -77,6 +77,7 @@ export default function DestinationScreen({ navigation, route }: any) {
         enablePoweredByContainer={false}
         nearbyPlacesAPI="GooglePlacesSearch"
         debounce={300}
+        onFail={(error) => console.error('[PLACES API ERROR - DESTINATION]:', error)}
       />
 
       {/* Recent Searches */}

@@ -13,6 +13,9 @@ export const generateRefreshToken = (userId: string): string => {
 };
 
 export const generateOTP = (): string => {
+  if (process.env.NODE_ENV === 'development' && (!process.env.TWILIO_ACCOUNT_SID || process.env.TWILIO_ACCOUNT_SID.startsWith('ACxxxxxxxxxx'))) {
+    return '123456';
+  }
   return Math.floor(100000 + Math.random() * 900000).toString();
 };
 

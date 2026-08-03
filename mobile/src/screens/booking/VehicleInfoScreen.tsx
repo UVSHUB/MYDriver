@@ -7,6 +7,7 @@ import {
   ScrollView,
   Alert,
   ActivityIndicator,
+  TextInput,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '../../store';
@@ -23,6 +24,11 @@ export default function VehicleInfoScreen({ navigation, route }: any) {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(selectedVehicleId);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+
+  // Custom text input states
+  const [customName, setCustomName] = useState('');
+  const [customPlate, setCustomPlate] = useState('');
 
   useEffect(() => {
     loadVehicles();
@@ -36,138 +42,219 @@ export default function VehicleInfoScreen({ navigation, route }: any) {
         const defaultV = data.find((v: Vehicle) => v.isDefault) || data[0];
         setSelectedId(defaultV._id);
         dispatch(setVehicle(defaultV._id));
+        setCustomName(`${defaultV.brand} ${defaultV.model}`);
+        setCustomPlate(defaultV.registrationNumber);
       }
     } catch (error) {
-      Alert.alert('Error', 'Could not load your vehicles.');
+      console.log('Could not load vehicles');
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleSelect = (id: string) => {
-    setSelectedId(id);
-    dispatch(setVehicle(id));
+  const handleSelect = (vehicle: Vehicle) => {
+    setSelectedId(vehicle._id);
+    dispatch(setVehicle(vehicle._id));
+    setCustomName(`${vehicle.brand} ${vehicle.model}`);
+    setCustomPlate(vehicle.registrationNumber);
   };
 
   const handleNext = async () => {
-    if (!selectedId) {
-      Alert.alert('Select Vehicle', 'Please select or add a vehicle.');
+    if (!customName.trim() || !customPlate.trim()) {
+      Alert.alert('Vehicle Info Required', 'Please enter your vehicle name and number plate.');
       return;
     }
 
-    // Estimate distance (placeholder - in production use Google Directions API)
-    const distance = Math.random() * 15 + 2; // 2-17 km
-    const duration = Math.round(distance * 3 + 10); // rough estimate
+    setIsSaving(true);
+    let vehicleIdToUse = selectedId;
 
-    const BASE_RATES: Record<string, number> = {
-      drive_me_home: 150, hire_driver: 200, emergency: 250, airport: 180,
-    };
-    const driverFee = Math.round((BASE_RATES[serviceType] || 150) + distance * 50);
-    const platformFee = Math.round(driverFee * 0.1);
-    const totalCost = driverFee + platformFee;
+    try {
+      // Check if there is an existing vehicle that matches the brand/model & plate
+      const matchingSavedVehicle = vehicles.find(
+        (v) =>
+          `${v.brand} ${v.model}`.toLowerCase() === customName.trim().toLowerCase() &&
+          v.registrationNumber.toLowerCase() === customPlate.trim().toLowerCase()
+      );
 
-    dispatch(setTripEstimate({
-      distance: Math.round(distance * 10) / 10,
-      duration,
-      driverFee,
-      platformFee,
-      totalCost,
-    }));
+      if (matchingSavedVehicle) {
+        vehicleIdToUse = matchingSavedVehicle._id;
+      } else {
+        // Parse brand/model
+        const nameParts = customName.trim().split(' ');
+        const brand = nameParts[0] || 'Custom';
+        const model = nameParts.slice(1).join(' ') || brand;
 
-    navigation.navigate('TripSummary', {
-      serviceType,
-      pickupLocation,
-      dropLocation,
-      vehicleId: selectedId,
-      estimatedDistance: Math.round(distance * 10) / 10,
-      estimatedDuration: duration,
-    });
+        // Create new vehicle on the backend
+        const newVehicle = await vehicleApi.create({
+          brand,
+          model,
+          registrationNumber: customPlate.trim().toUpperCase(),
+          color: 'Black',
+          type: 'sedan',
+          isDefault: vehicles.length === 0,
+        });
+
+        vehicleIdToUse = newVehicle._id;
+        setVehicles((prev) => [...prev, newVehicle]);
+      }
+
+      dispatch(setVehicle(vehicleIdToUse as string));
+
+      // Calculate distance/fare estimates
+      const distance = Math.random() * 15 + 2; // 2-17 km
+      const duration = Math.round(distance * 3 + 10); // rough estimate
+
+      const BASE_RATES: Record<string, number> = {
+        drive_me_home: 150,
+        hire_driver: 200,
+        emergency: 250,
+        airport: 180,
+      };
+      const driverFee = Math.round((BASE_RATES[serviceType] || 150) + distance * 50);
+      const platformFee = Math.round(driverFee * 0.1);
+      const totalCost = driverFee + platformFee;
+
+      dispatch(setTripEstimate({
+        distance: Math.round(distance * 10) / 10,
+        duration,
+        driverFee,
+        platformFee,
+        totalCost,
+      }));
+
+      navigation.navigate('TripSummary', {
+        serviceType,
+        pickupLocation,
+        dropLocation,
+        vehicleId: vehicleIdToUse,
+        estimatedDistance: Math.round(distance * 10) / 10,
+        estimatedDuration: duration,
+      });
+    } catch (error) {
+      Alert.alert('Error', 'Could not save vehicle info. Please try again.');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const VEHICLE_ICONS: Record<string, string> = {
-    sedan: '🚗', suv: '🚙', van: '🚐', truck: '🚚', luxury: '🏎️', other: '🚘',
+    sedan: '🚗',
+    suv: '🚙',
+    van: '🚐',
+    truck: '🚚',
+    luxury: '🏎️',
+    other: '🚘',
   };
 
   return (
     <View style={styles.container}>
+      {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton} activeOpacity={0.8}>
           <Text style={styles.backIcon}>←</Text>
         </TouchableOpacity>
-        <Text style={styles.title}>Your Vehicle</Text>
-        <TouchableOpacity
-          onPress={() => navigation.navigate('Profile', { screen: 'Vehicles' })}
-          style={styles.addButton}
-        >
-          <Text style={styles.addButtonText}>+ Add</Text>
-        </TouchableOpacity>
+        <Text style={styles.title}>Vehicle Details</Text>
+        <View style={{ width: 40 }} />
       </View>
 
-      <ScrollView contentContainerStyle={styles.content}>
-        <Text style={styles.subtitle}>Select the vehicle the driver will operate</Text>
+      <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+        <Text style={styles.subtitle}>Enter the vehicle details the driver will operate</Text>
 
+        {/* TextInput Form for Fast Custom Entry */}
+        <View style={styles.formContainer}>
+          <View style={styles.inputGroup}>
+            <Text style={styles.inputLabel}>Vehicle Name (Brand & Model)</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="e.g. Toyota Prius"
+              placeholderTextColor="#8E8E93"
+              value={customName}
+              onChangeText={(text) => {
+                setCustomName(text);
+                // Reset selectedId if they start typing manually (unless it matches a selection)
+                if (selectedId) setSelectedId(null);
+              }}
+            />
+          </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.inputLabel}>Number Plate</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="e.g. WP CAD-1234"
+              placeholderTextColor="#8E8E93"
+              value={customPlate}
+              onChangeText={(text) => {
+                setCustomPlate(text);
+                if (selectedId) setSelectedId(null);
+              }}
+              autoCapitalize="characters"
+            />
+          </View>
+        </View>
+
+        {/* Saved Vehicles Section (Only if user has registered vehicles) */}
         {isLoading ? (
-          <ActivityIndicator color={COLORS.primary} style={{ marginTop: 40 }} />
-        ) : vehicles.length === 0 ? (
-          <View style={styles.emptyState}>
-            <Text style={styles.emptyEmoji}>🚗</Text>
-            <Text style={styles.emptyTitle}>No vehicles yet</Text>
-            <Text style={styles.emptySubtitle}>Add your vehicle to continue</Text>
-            <TouchableOpacity
-              style={styles.emptyButton}
-              onPress={() => navigation.navigate('Profile', { screen: 'AddVehicle' })}
-            >
-              <Text style={styles.emptyButtonText}>Add Vehicle</Text>
-            </TouchableOpacity>
-          </View>
+          <ActivityIndicator color={COLORS.primary} style={{ marginTop: 24 }} />
         ) : (
-          <View style={styles.vehicleList}>
-            {vehicles.map((vehicle) => (
-              <TouchableOpacity
-                key={vehicle._id}
-                style={[
-                  styles.vehicleCard,
-                  selectedId === vehicle._id && styles.vehicleCardSelected,
-                ]}
-                onPress={() => handleSelect(vehicle._id)}
-                activeOpacity={0.85}
-              >
-                <View style={styles.vehicleIconBg}>
-                  <Text style={styles.vehicleIcon}>{VEHICLE_ICONS[vehicle.type] || '🚗'}</Text>
-                </View>
-                <View style={styles.vehicleInfo}>
-                  <Text style={styles.vehicleName}>{vehicle.brand} {vehicle.model}</Text>
-                  <Text style={styles.vehicleReg}>{vehicle.registrationNumber}</Text>
-                  <View style={styles.vehicleMeta}>
-                    <View style={[styles.colorDot, { backgroundColor: vehicle.color.toLowerCase() }]} />
-                    <Text style={styles.vehicleColor}>{vehicle.color}</Text>
-                    {vehicle.year && <Text style={styles.vehicleYear}>· {vehicle.year}</Text>}
-                  </View>
-                </View>
-                {vehicle.isDefault && (
-                  <View style={styles.defaultBadge}>
-                    <Text style={styles.defaultBadgeText}>Default</Text>
-                  </View>
-                )}
-                <View style={[
-                  styles.radioOuter,
-                  selectedId === vehicle._id && { borderColor: COLORS.primary },
-                ]}>
-                  {selectedId === vehicle._id && <View style={styles.radioInner} />}
-                </View>
-              </TouchableOpacity>
-            ))}
-          </View>
+          vehicles.length > 0 && (
+            <View style={styles.savedSection}>
+              <Text style={styles.savedTitle}>Or Choose a Saved Vehicle</Text>
+              <View style={styles.vehicleList}>
+                {vehicles.map((vehicle) => {
+                  const isSelected = selectedId === vehicle._id;
+                  return (
+                    <TouchableOpacity
+                      key={vehicle._id}
+                      style={[
+                        styles.vehicleCard,
+                        isSelected && styles.vehicleCardSelected,
+                      ]}
+                      onPress={() => handleSelect(vehicle)}
+                      activeOpacity={0.85}
+                    >
+                      <View style={styles.vehicleIconBg}>
+                        <Text style={styles.vehicleIcon}>{VEHICLE_ICONS[vehicle.type] || '🚗'}</Text>
+                      </View>
+                      <View style={styles.vehicleInfo}>
+                        <Text style={styles.vehicleName}>{vehicle.brand} {vehicle.model}</Text>
+                        <Text style={styles.vehicleReg}>{vehicle.registrationNumber}</Text>
+                        <View style={styles.vehicleMeta}>
+                          <View style={[styles.colorDot, { backgroundColor: vehicle.color.toLowerCase() }]} />
+                          <Text style={styles.vehicleColor}>{vehicle.color}</Text>
+                        </View>
+                      </View>
+                      <View style={[
+                        styles.radioOuter,
+                        isSelected && { borderColor: COLORS.primary },
+                      ]}>
+                        {isSelected && <View style={styles.radioInner} />}
+                      </View>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            </View>
+          )
         )}
       </ScrollView>
 
+      {/* Footer Continue Button */}
       <View style={styles.footer}>
         <TouchableOpacity
-          style={[styles.nextButton, !selectedId && styles.nextButtonDisabled]}
+          style={[
+            styles.nextButton,
+            (!customName.trim() || !customPlate.trim()) && styles.nextButtonDisabled,
+          ]}
           onPress={handleNext}
-          disabled={!selectedId}
+          disabled={isSaving || !customName.trim() || !customPlate.trim()}
+          activeOpacity={0.9}
         >
-          <Text style={styles.nextButtonText}>Continue →</Text>
+          {isSaving ? (
+            <ActivityIndicator color="#FFFFFF" />
+          ) : (
+            <Text style={styles.nextButtonText}>Search Driver →</Text>
+          )}
         </TouchableOpacity>
       </View>
     </View>
@@ -185,18 +272,61 @@ const styles = StyleSheet.create({
     paddingBottom: SPACING.md,
   },
   backButton: {
-    width: 40, height: 40, borderRadius: BORDER_RADIUS.sm,
-    backgroundColor: COLORS.surface, alignItems: 'center', justifyContent: 'center',
+    width: 44,
+    height: 44,
+    borderRadius: BORDER_RADIUS.sm,
+    backgroundColor: COLORS.surface,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: COLORS.cardBorder,
   },
-  backIcon: { fontSize: 20, color: COLORS.black },
-  title: { fontSize: FONT_SIZES.lg, fontWeight: '800', color: COLORS.textPrimary },
-  addButton: {
-    backgroundColor: COLORS.primary, borderRadius: BORDER_RADIUS.sm,
-    paddingHorizontal: 14, paddingVertical: 8,
+  backIcon: { fontSize: 20, color: COLORS.primary },
+  title: { fontSize: FONT_SIZES.lg, fontWeight: '800', color: COLORS.textPrimary, letterSpacing: -0.5 },
+  content: { paddingHorizontal: SPACING.xl, paddingBottom: 120 },
+  subtitle: { fontSize: 13, color: COLORS.textSecondary, marginBottom: SPACING.lg },
+  formContainer: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    borderWidth: 1.5,
+    borderColor: '#FFE0B2',
+    padding: 16,
+    marginBottom: 24,
+    shadowColor: '#E65100',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.06,
+    shadowRadius: 10,
+    elevation: 2,
   },
-  addButtonText: { color: COLORS.white, fontSize: FONT_SIZES.sm, fontWeight: '700' },
-  content: { paddingHorizontal: SPACING.xl, paddingBottom: 100 },
-  subtitle: { fontSize: FONT_SIZES.base, color: COLORS.textSecondary, marginBottom: SPACING.lg },
+  inputGroup: {
+    marginBottom: 16,
+  },
+  inputLabel: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#1C1C1E',
+    marginBottom: 8,
+  },
+  input: {
+    height: 48,
+    borderWidth: 1,
+    borderColor: '#FFE0B2',
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    fontSize: 14,
+    color: '#1C1C1E',
+    backgroundColor: '#FAF9F6',
+  },
+  savedSection: {
+    marginTop: 8,
+  },
+  savedTitle: {
+    fontSize: 14,
+    fontWeight: '800',
+    color: COLORS.textPrimary,
+    marginBottom: 14,
+    letterSpacing: -0.2,
+  },
   vehicleList: { gap: 12 },
   vehicleCard: {
     flexDirection: 'row',
@@ -206,48 +336,62 @@ const styles = StyleSheet.create({
     padding: SPACING.base,
     borderWidth: 1,
     borderColor: COLORS.cardBorder,
-    ...SHADOWS.sm,
+    shadowColor: '#E65100',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 1,
   },
-  vehicleCardSelected: { borderColor: COLORS.primary, borderWidth: 2 },
+  vehicleCardSelected: { borderColor: COLORS.primary, borderWidth: 1.5 },
   vehicleIconBg: {
-    width: 52, height: 52, borderRadius: BORDER_RADIUS.md,
-    backgroundColor: COLORS.surfaceLight, alignItems: 'center', justifyContent: 'center', marginRight: 14,
+    width: 48,
+    height: 48,
+    borderRadius: BORDER_RADIUS.md,
+    backgroundColor: COLORS.surfaceLight,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 14,
   },
-  vehicleIcon: { fontSize: 26 },
+  vehicleIcon: { fontSize: 22 },
   vehicleInfo: { flex: 1 },
-  vehicleName: { fontSize: FONT_SIZES.md, fontWeight: '700', color: COLORS.textPrimary },
-  vehicleReg: { fontSize: FONT_SIZES.sm, color: COLORS.primary, fontWeight: '600', marginTop: 3 },
+  vehicleName: { fontSize: 14, fontWeight: '700', color: COLORS.textPrimary },
+  vehicleReg: { fontSize: 12, color: COLORS.primary, fontWeight: '600', marginTop: 3 },
   vehicleMeta: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 4 },
-  colorDot: { width: 10, height: 10, borderRadius: 5 },
-  vehicleColor: { fontSize: FONT_SIZES.xs, color: COLORS.textSecondary },
-  vehicleYear: { fontSize: FONT_SIZES.xs, color: COLORS.textMuted },
-  defaultBadge: {
-    backgroundColor: `${COLORS.secondary}20`, borderRadius: BORDER_RADIUS.full,
-    paddingHorizontal: 8, paddingVertical: 3, marginRight: 10,
-  },
-  defaultBadgeText: { color: COLORS.secondary, fontSize: 9, fontWeight: '700' },
+  colorDot: { width: 8, height: 8, borderRadius: 4 },
+  vehicleColor: { fontSize: 11, color: COLORS.textSecondary },
   radioOuter: {
-    width: 22, height: 22, borderRadius: 11, borderWidth: 2,
-    borderColor: COLORS.cardBorder, alignItems: 'center', justifyContent: 'center',
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    borderWidth: 1.5,
+    borderColor: COLORS.cardBorder,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   radioInner: { width: 10, height: 10, borderRadius: 5, backgroundColor: COLORS.primary },
-  emptyState: { alignItems: 'center', paddingTop: 60, gap: 12 },
-  emptyEmoji: { fontSize: 64 },
-  emptyTitle: { fontSize: FONT_SIZES.xl, fontWeight: '700', color: COLORS.textPrimary },
-  emptySubtitle: { fontSize: FONT_SIZES.base, color: COLORS.textSecondary },
-  emptyButton: {
-    backgroundColor: COLORS.primary, borderRadius: BORDER_RADIUS.lg,
-    paddingHorizontal: SPACING.xl, paddingVertical: 14, marginTop: 8,
-  },
-  emptyButtonText: { color: COLORS.white, fontSize: FONT_SIZES.base, fontWeight: '700' },
   footer: {
-    position: 'absolute', bottom: 0, left: 0, right: 0, padding: SPACING.xl,
-    backgroundColor: COLORS.background, borderTopWidth: 1, borderTopColor: COLORS.cardBorder,
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: SPACING.xl,
+    backgroundColor: COLORS.background,
+    borderTopWidth: 1,
+    borderTopColor: COLORS.cardBorder,
   },
   nextButton: {
-    backgroundColor: COLORS.primary, borderRadius: BORDER_RADIUS.lg,
-    height: 56, alignItems: 'center', justifyContent: 'center', ...SHADOWS.lg,
+    backgroundColor: COLORS.primary,
+    borderRadius: 12,
+    height: 56,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#E65100',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 3,
   },
-  nextButtonDisabled: { backgroundColor: COLORS.surfaceLight },
-  nextButtonText: { color: COLORS.white, fontSize: FONT_SIZES.md, fontWeight: '700' },
+  nextButtonDisabled: { backgroundColor: COLORS.surfaceLight, shadowOpacity: 0, elevation: 0 },
+  nextButtonText: { color: '#FFFFFF', fontSize: 15, fontWeight: '800' },
 });
+
