@@ -1,65 +1,65 @@
 import Constants from 'expo-constants';
 import { NativeModules } from 'react-native';
 
-// App Colors - Premium Dark Orange Theme
+// App Colors - Executive Modern Theme (Uber / Bolt Style)
 export const COLORS = {
-  // Primary Palette (Vibrant Dark Orange Controls)
-  primary: '#E65100',
-  primaryLight: '#FFF3E0',
-  primaryDark: '#BF360C',
+  // Primary Palette (Midnight Obsidian Black)
+  primary: '#111827',
+  primaryLight: '#F1F5F9',
+  primaryDark: '#0F172A',
 
-  // Secondary (Vibrant Accent Colors)
-  secondary: '#FF6D00',
-  secondaryLight: '#FFE0B2',
-  secondaryDark: '#B53D00',
+  // Secondary (Electric Amber Accent)
+  secondary: '#FF5500',
+  secondaryLight: '#FFF7ED',
+  secondaryDark: '#EA580C',
 
-  // Background & Surfaces
-  background: '#FFFFFF',      // Pure clean white background
-  surface: '#FFF3E0',         // Soft peach-orange surface
-  surfaceLight: '#FFE0B2',    // Light peach surface
+  // Background & Surfaces (Clean Off-White & Pure Crisp Cards)
+  background: '#F8FAFC',      // Ultra-clean slate off-white background
+  surface: '#FFFFFF',         // Pure pristine white cards & sheets
+  surfaceLight: '#F1F5F9',    // Light cool slate container
   card: '#FFFFFF',            // Pure white cards
-  cardBorder: '#FFE0B2',      // Hairline orange-peach dividers
+  cardBorder: '#E2E8F0',      // Hairline subtle slate border
 
   // Light theme fallback
-  backgroundLight: '#FFFFFF',
-  surfaceLightTheme: '#FFF3E0',
+  backgroundLight: '#F8FAFC',
+  surfaceLightTheme: '#FFFFFF',
   cardLight: '#FFFFFF',
 
-  // Typography
-  textPrimary: '#000000',     // Stark black text
-  textSecondary: '#55555C',   // Charcoal grey
-  textMuted: '#8E8E93',       // Soft muted light grey
-  textDark: '#000000',
-  textDarkSecondary: '#1C1C1E',
+  // Typography (Slate Palette)
+  textPrimary: '#0F172A',     // Deep Obsidian Slate
+  textSecondary: '#475569',   // Slate Body Gray
+  textMuted: '#94A3B8',       // Muted Light Slate
+  textDark: '#0F172A',
+  textDarkSecondary: '#334155',
 
-  // Status Colors (Subtle premium design)
-  success: '#248A3D',         // Clean Dark Green
-  warning: '#FF9500',         // Clean Amber
-  error: '#FF3B30',           // Clean Coral Red
-  info: '#007AFF',            // Clean Royal Blue
+  // Status Colors (Executive Modern)
+  success: '#10B981',         // Vibrant Emerald Green
+  warning: '#F59E0B',         // Amber Gold
+  error: '#EF4444',           // Coral Red
+  info: '#3B82F6',            // Electric Blue
 
   // Clean flat gradient simulation
   gradientStart: '#FFFFFF',
-  gradientEnd: '#FFF3E0',
-  gradientBlue: ['#E65100', '#FF8F00'],
-  gradientGreen: ['#248A3D', '#1B6029'],
-  gradientEmergency: ['#FF3B30', '#C62828'],
+  gradientEnd: '#F8FAFC',
+  gradientBlue: ['#111827', '#1E293B'],
+  gradientGreen: ['#10B981', '#059669'],
+  gradientEmergency: ['#EF4444', '#DC2626'],
 
   // Service Card Accents
-  driveHome: '#E65100',
-  hireDriver: '#E65100',
-  emergency: '#FF3B30',       // Red for safety
-  airport: '#E65100',
+  driveHome: '#111827',
+  hireDriver: '#111827',
+  emergency: '#EF4444',       // Red for safety
+  airport: '#111827',
 
   // Rating
-  star: '#FFCC00',
+  star: '#F59E0B',
 
   // Common
   white: '#FFFFFF',
   black: '#000000',
   transparent: 'transparent',
-  overlay: 'rgba(0, 0, 0, 0.4)',
-  overlayLight: 'rgba(0, 0, 0, 0.15)',
+  overlay: 'rgba(15, 23, 42, 0.5)',
+  overlayLight: 'rgba(15, 23, 42, 0.12)',
 };
 
 export const FONTS = {
@@ -97,7 +97,7 @@ export const SPACING = {
 };
 
 export const BORDER_RADIUS = {
-  sm: 10,     // Smooth corners for modern UI elements
+  sm: 10,
   md: 16,
   lg: 24,
   xl: 32,
@@ -107,25 +107,25 @@ export const BORDER_RADIUS = {
 
 export const SHADOWS = {
   sm: {
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
-    shadowRadius: 1.5,
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
     elevation: 2,
   },
   md: {
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.3,
-    shadowRadius: 10,
-    elevation: 5,
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 4,
   },
   lg: {
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 12 },
-    shadowOpacity: 0.4,
-    shadowRadius: 20,
-    elevation: 10,
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.12,
+    shadowRadius: 24,
+    elevation: 8,
   },
 };
 
