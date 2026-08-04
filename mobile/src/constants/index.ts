@@ -1,38 +1,38 @@
 import Constants from 'expo-constants';
 import { NativeModules } from 'react-native';
 
-// App Colors - Executive Modern Theme (Uber / Bolt Style)
+// App Colors - Orange x White x Black Theme
 export const COLORS = {
-  // Primary Palette (Midnight Obsidian Black)
-  primary: '#111827',
-  primaryLight: '#F1F5F9',
-  primaryDark: '#0F172A',
+  // Primary Palette (Electric Orange Accent & Action)
+  primary: '#FF5500',
+  primaryLight: '#FFF5F0',
+  primaryDark: '#D94800',
 
-  // Secondary (Electric Amber Accent)
-  secondary: '#FF5500',
-  secondaryLight: '#FFF7ED',
-  secondaryDark: '#EA580C',
+  // Secondary Palette (Obsidian Deep Black)
+  secondary: '#09090B',
+  secondaryLight: '#18181B',
+  secondaryDark: '#000000',
 
-  // Background & Surfaces (Clean Off-White & Pure Crisp Cards)
-  background: '#F8FAFC',      // Ultra-clean slate off-white background
+  // Background & Surfaces (Crisp White & Off-White Cards)
+  background: '#F9FAFB',      // Ultra-clean light gray/off-white background
   surface: '#FFFFFF',         // Pure pristine white cards & sheets
-  surfaceLight: '#F1F5F9',    // Light cool slate container
+  surfaceLight: '#FFF5F0',    // Soft light orange tinted container
   card: '#FFFFFF',            // Pure white cards
-  cardBorder: '#E2E8F0',      // Hairline subtle slate border
+  cardBorder: '#E5E7EB',      // Subtle clean hairline border
 
   // Light theme fallback
-  backgroundLight: '#F8FAFC',
+  backgroundLight: '#F9FAFB',
   surfaceLightTheme: '#FFFFFF',
   cardLight: '#FFFFFF',
 
-  // Typography (Slate Palette)
-  textPrimary: '#0F172A',     // Deep Obsidian Slate
-  textSecondary: '#475569',   // Slate Body Gray
-  textMuted: '#94A3B8',       // Muted Light Slate
-  textDark: '#0F172A',
-  textDarkSecondary: '#334155',
+  // Typography (Jet Black & Slate Body)
+  textPrimary: '#09090B',     // Jet Black
+  textSecondary: '#4B5563',   // Medium Slate Gray
+  textMuted: '#9CA3AF',       // Muted Light Gray
+  textDark: '#09090B',
+  textDarkSecondary: '#27272A',
 
-  // Status Colors (Executive Modern)
+  // Status Colors
   success: '#10B981',         // Vibrant Emerald Green
   warning: '#F59E0B',         // Amber Gold
   error: '#EF4444',           // Coral Red
@@ -40,16 +40,16 @@ export const COLORS = {
 
   // Clean flat gradient simulation
   gradientStart: '#FFFFFF',
-  gradientEnd: '#F8FAFC',
-  gradientBlue: ['#111827', '#1E293B'],
+  gradientEnd: '#F9FAFB',
+  gradientBlue: ['#FF5500', '#D94800'],
   gradientGreen: ['#10B981', '#059669'],
   gradientEmergency: ['#EF4444', '#DC2626'],
 
   // Service Card Accents
-  driveHome: '#111827',
-  hireDriver: '#111827',
+  driveHome: '#FF5500',
+  hireDriver: '#09090B',
   emergency: '#EF4444',       // Red for safety
-  airport: '#111827',
+  airport: '#FF5500',
 
   // Rating
   star: '#F59E0B',
@@ -58,8 +58,8 @@ export const COLORS = {
   white: '#FFFFFF',
   black: '#000000',
   transparent: 'transparent',
-  overlay: 'rgba(15, 23, 42, 0.5)',
-  overlayLight: 'rgba(15, 23, 42, 0.12)',
+  overlay: 'rgba(9, 9, 11, 0.6)',
+  overlayLight: 'rgba(9, 9, 11, 0.15)',
 };
 
 export const FONTS = {
