@@ -28,7 +28,7 @@ const getTransporter = () => {
 
 export const sendOTPSMS = async (phone: string, otp: string): Promise<boolean> => {
   try {
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.NODE_ENV === 'development' && (!process.env.TWILIO_ACCOUNT_SID || process.env.TWILIO_ACCOUNT_SID.startsWith('ACxxxxxxxxxx'))) {
       logger.info(`[DEV SMS] OTP for ${phone}: ${otp}`);
       return true;
     }
