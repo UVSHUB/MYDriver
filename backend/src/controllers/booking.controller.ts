@@ -7,6 +7,47 @@ import { AppError } from '../utils/appError';
 import { calculateFare } from '../utils/helpers';
 import { sendPushNotification } from '../services/notification.service';
 
+// POST /api/bookings/validate-coupon
+export const validateCoupon = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const { code, totalAmount } = req.body;
+    if (!code) throw new AppError('Coupon code is required.', 400);
+
+    const cleanCode = code.trim().toUpperCase();
+    let discountAmount = 0;
+    let description = '';
+
+    if (cleanCode === 'LUXRIDE') {
+      discountAmount = Math.min(Math.round(totalAmount * 0.3), 500);
+      description = '30% Off Premium Discount applied';
+    } else if (cleanCode === 'MYDRIVER500') {
+      discountAmount = Math.min(500, totalAmount);
+      description = 'LKR 500 Flat Coupon applied';
+    } else if (cleanCode === 'AIRPORT20') {
+      discountAmount = Math.min(Math.round(totalAmount * 0.2), 400);
+      description = '20% Off Airport Transfer applied';
+    } else if (cleanCode === 'FIRST100') {
+      discountAmount = Math.min(100, totalAmount);
+      description = 'LKR 100 Welcome Discount applied';
+    } else {
+      throw new AppError('Invalid or expired promo code.', 400);
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Coupon code applied successfully.',
+      data: {
+        code: cleanCode,
+        discountAmount,
+        finalTotal: Math.max(0, totalAmount - discountAmount),
+        description,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // POST /api/bookings
 export const createBooking = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
   try {

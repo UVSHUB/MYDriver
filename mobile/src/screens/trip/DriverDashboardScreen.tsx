@@ -40,12 +40,31 @@ export default function DriverDashboardScreen({ navigation }: any) {
   const [isAccepting, setIsAccepting] = useState(false);
   const locationSubscription = useRef<Location.LocationSubscription | null>(null);
 
-  // Stats
+  // Countdown timer for incoming request
+  const [countdown, setCountdown] = useState(15);
   const [stats, setStats] = useState({
     earnings: 24500,
     trips: 18,
     rating: 4.9,
   });
+
+  useEffect(() => {
+    let timer: any;
+    if (incomingRequest) {
+      setCountdown(15);
+      timer = setInterval(() => {
+        setCountdown((prev) => {
+          if (prev <= 1) {
+            clearInterval(timer);
+            setIncomingRequest(null);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [incomingRequest]);
 
   useEffect(() => {
     // Connect to sockets

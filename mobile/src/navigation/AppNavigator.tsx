@@ -25,6 +25,7 @@ import EditProfileScreen from '../screens/main/EditProfileScreen';
 import VehiclesScreen from '../screens/main/VehiclesScreen';
 import AddVehicleScreen from '../screens/main/AddVehicleScreen';
 import EmergencyContactsScreen from '../screens/main/EmergencyContactsScreen';
+import SavedPlacesScreen from '../screens/main/SavedPlacesScreen';
 import SettingsScreen from '../screens/main/SettingsScreen';
 import NotificationsScreen from '../screens/main/NotificationsScreen';
 import BecomeDriverScreen from '../screens/main/BecomeDriverScreen';
@@ -115,6 +116,7 @@ const ProfileNavigator = () => (
     <ProfileStack.Screen name="Vehicles" component={VehiclesScreen} />
     <ProfileStack.Screen name="AddVehicle" component={AddVehicleScreen} />
     <ProfileStack.Screen name="EmergencyContacts" component={EmergencyContactsScreen} />
+    <ProfileStack.Screen name="SavedPlaces" component={SavedPlacesScreen} />
     <ProfileStack.Screen name="Settings" component={SettingsScreen} />
     <ProfileStack.Screen name="Notifications" component={NotificationsScreen} />
   </ProfileStack.Navigator>

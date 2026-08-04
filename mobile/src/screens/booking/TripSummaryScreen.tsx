@@ -7,6 +7,7 @@ import {
   ScrollView,
   Alert,
   ActivityIndicator,
+  TextInput,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
@@ -22,6 +23,27 @@ export default function TripSummaryScreen({ navigation, route }: any) {
 
   const [paymentMethod, setPaymentMethod] = useState<'wallet' | 'payhere'>('wallet');
   const [isLoading, setIsLoading] = useState(false);
+  const [couponCode, setCouponCode] = useState('');
+  const [discountAmount, setDiscountAmount] = useState(0);
+  const [appliedCouponDesc, setAppliedCouponDesc] = useState('');
+  const [isValidatingCoupon, setIsValidatingCoupon] = useState(false);
+
+  const finalTotal = Math.max(0, totalCost - discountAmount);
+
+  const handleApplyCoupon = async () => {
+    if (!couponCode.trim()) return;
+    setIsValidatingCoupon(true);
+    try {
+      const res = await bookingApi.validateCoupon(couponCode, totalCost);
+      setDiscountAmount(res.discountAmount);
+      setAppliedCouponDesc(res.description);
+      Alert.alert('Coupon Applied 🎉', res.description);
+    } catch (err: any) {
+      Alert.alert('Invalid Coupon', err.response?.data?.message || 'Invalid or expired promo code.');
+    } finally {
+      setIsValidatingCoupon(false);
+    }
+  };
 
   const service = SERVICE_TYPES.find(s => s.id === serviceType);
 
@@ -119,11 +141,46 @@ export default function TripSummaryScreen({ navigation, route }: any) {
             <Text style={styles.fareLabel}>Platform Fee</Text>
             <Text style={styles.fareValue}>LKR {platformFee}</Text>
           </View>
+          {discountAmount > 0 && (
+            <View style={styles.fareRow}>
+              <Text style={[styles.fareLabel, { color: COLORS.success, fontWeight: '700' }]}>Promo Discount ({couponCode.toUpperCase()})</Text>
+              <Text style={[styles.fareValue, { color: COLORS.success }]}>- LKR {discountAmount}</Text>
+            </View>
+          )}
           <View style={styles.fareDivider} />
           <View style={styles.fareRow}>
             <Text style={styles.fareTotalLabel}>Total</Text>
-            <Text style={styles.fareTotalValue}>LKR {totalCost}</Text>
+            <Text style={styles.fareTotalValue}>LKR {finalTotal}</Text>
           </View>
+        </View>
+
+        {/* Promo Code Box */}
+        <View style={styles.promoInputSection}>
+          <Text style={styles.sectionLabel}>PROMO CODE / VOUCHER</Text>
+          <View style={styles.promoInputRow}>
+            <TextInput
+              style={styles.promoInput}
+              placeholder="Enter LUXRIDE or MYDRIVER500"
+              value={couponCode}
+              onChangeText={setCouponCode}
+              autoCapitalize="characters"
+            />
+            <TouchableOpacity
+              style={styles.applyCouponBtn}
+              onPress={handleApplyCoupon}
+              disabled={isValidatingCoupon}
+              activeOpacity={0.8}
+            >
+              {isValidatingCoupon ? (
+                <ActivityIndicator size="small" color={COLORS.white} />
+              ) : (
+                <Text style={styles.applyCouponTxt}>Apply</Text>
+              )}
+            </TouchableOpacity>
+          </View>
+          {appliedCouponDesc ? (
+            <Text style={styles.appliedDescText}>✓ {appliedCouponDesc}</Text>
+          ) : null}
         </View>
 
         {/* Payment Method */}
@@ -156,7 +213,7 @@ export default function TripSummaryScreen({ navigation, route }: any) {
       <View style={styles.footer}>
         <View style={styles.totalRow}>
           <Text style={styles.totalLabel}>Total Amount</Text>
-          <Text style={styles.totalAmount}>LKR {totalCost}</Text>
+          <Text style={styles.totalAmount}>LKR {finalTotal}</Text>
         </View>
         <TouchableOpacity
           style={[styles.confirmButton, isLoading && styles.confirmButtonDisabled]}
@@ -256,6 +313,29 @@ const styles = StyleSheet.create({
   fareTotalLabel: { fontSize: FONT_SIZES.lg, fontWeight: '800', color: COLORS.black },
   fareTotalValue: { fontSize: FONT_SIZES.xl, fontWeight: '800', color: COLORS.black, letterSpacing: -0.5 },
   paymentSection: { gap: 10 },
+  promoInputSection: { gap: 6 },
+  promoInputRow: { flexDirection: 'row', gap: 10 },
+  promoInput: {
+    flex: 1,
+    height: 48,
+    backgroundColor: COLORS.surface,
+    borderRadius: BORDER_RADIUS.sm,
+    paddingHorizontal: SPACING.base,
+    borderWidth: 1,
+    borderColor: COLORS.cardBorder,
+    fontSize: FONT_SIZES.sm,
+    fontWeight: '700',
+    color: COLORS.black,
+  },
+  applyCouponBtn: {
+    backgroundColor: COLORS.black,
+    paddingHorizontal: 20,
+    borderRadius: BORDER_RADIUS.sm,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  applyCouponTxt: { color: COLORS.white, fontWeight: '800', fontSize: FONT_SIZES.sm },
+  appliedDescText: { fontSize: FONT_SIZES.xs, color: COLORS.success, fontWeight: '700', marginTop: 4 },
   sectionLabel: { fontSize: 9, fontWeight: '700', color: COLORS.textMuted, letterSpacing: 1 },
   paymentOption: {
     flexDirection: 'row',

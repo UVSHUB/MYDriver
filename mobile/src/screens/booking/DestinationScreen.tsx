@@ -5,6 +5,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   FlatList,
+  ScrollView,
   Alert,
   ActivityIndicator,
 } from 'react-native';
@@ -80,6 +81,36 @@ export default function DestinationScreen({ navigation, route }: any) {
         onFail={(error) => console.error('[PLACES API ERROR - DESTINATION]:', error)}
       />
 
+      {/* Quick Location Shortcuts */}
+      <View style={styles.quickShortcuts}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8, paddingHorizontal: SPACING.xl }}>
+          <TouchableOpacity
+            style={styles.shortcutChip}
+            onPress={() => handleSelect({ address: 'Home (No. 45, Galle Road, Colombo 03)', coordinates: { latitude: 6.9271, longitude: 79.8612 } })}
+          >
+            <Text style={styles.shortcutTxt}>Home 🏠</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.shortcutChip}
+            onPress={() => handleSelect({ address: 'Work (World Trade Center, Colombo 01)', coordinates: { latitude: 6.9344, longitude: 79.8428 } })}
+          >
+            <Text style={styles.shortcutTxt}>Work 💼</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.shortcutChip}
+            onPress={() => handleSelect({ address: 'Bandaranaike Intl Airport, Katunayake', coordinates: { latitude: 7.1808, longitude: 79.8841 } })}
+          >
+            <Text style={styles.shortcutTxt}>Airport ✈️</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.shortcutChip}
+            onPress={() => navigation.navigate('Profile', { screen: 'SavedPlaces' })}
+          >
+            <Text style={styles.shortcutTxt}>Saved Places 📍</Text>
+          </TouchableOpacity>
+        </ScrollView>
+      </View>
+
       {/* Recent Searches */}
       <View style={styles.recentSection}>
         <Text style={styles.recentTitle}>Recent Searches</Text>
@@ -89,7 +120,7 @@ export default function DestinationScreen({ navigation, route }: any) {
             style={styles.recentItem}
             onPress={() => handleSelect({
               address: `${item.name}, ${item.address}`,
-              coordinates: { latitude: 6.9271, longitude: 79.8612 }, // placeholder
+              coordinates: { latitude: 6.9271, longitude: 79.8612 },
             })}
           >
             <View style={styles.recentIconBg}>
@@ -166,6 +197,16 @@ const styles = StyleSheet.create({
     fontSize: FONT_SIZES.base,
   },
   separator: { backgroundColor: COLORS.cardBorder, height: 1 },
+  quickShortcuts: { marginTop: 12 },
+  shortcutChip: {
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: BORDER_RADIUS.full,
+    backgroundColor: COLORS.surface,
+    borderWidth: 1,
+    borderColor: COLORS.cardBorder,
+  },
+  shortcutTxt: { fontSize: FONT_SIZES.xs, fontWeight: '700', color: COLORS.black },
   recentSection: {
     paddingHorizontal: SPACING.xl,
     marginTop: SPACING.xl,

@@ -47,6 +47,7 @@ export default function ProfileScreen({ navigation }: any) {
       : [{ icon: '💼', label: 'Become a Driver', onPress: () => navigation.navigate('BecomeDriver') }]),
     { icon: '🚗', label: 'My Vehicles', onPress: () => navigation.navigate('Vehicles') },
     { icon: '📋', label: 'Booking History', onPress: () => navigation.navigate('Bookings') },
+    { icon: '📍', label: 'Saved Places', onPress: () => navigation.navigate('SavedPlaces') },
     { icon: '🆘', label: 'Emergency Contacts', onPress: () => navigation.navigate('EmergencyContacts') },
     { icon: '🔔', label: 'Notifications', onPress: () => navigation.navigate('Notifications') },
     { icon: '⚙️', label: 'Settings', onPress: () => navigation.navigate('Settings') },

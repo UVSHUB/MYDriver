@@ -26,6 +26,7 @@ export default function RatingScreen({ navigation, route }: any) {
     punctuality: 0,
   });
   const [comment, setComment] = useState('');
+  const [tipAmount, setTipAmount] = useState<number>(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const driver = activeBooking?.driverId as any;
@@ -151,6 +152,25 @@ export default function RatingScreen({ navigation, route }: any) {
         </View>
       </View>
 
+      {/* Driver Tip Selection */}
+      <View style={styles.tipSection}>
+        <Text style={styles.tagsLabel}>ADD DRIVER TIP (100% GOES TO DRIVER)</Text>
+        <View style={styles.tipRow}>
+          {[0, 100, 200, 500].map((amt) => (
+            <TouchableOpacity
+              key={amt}
+              style={[styles.tipChip, tipAmount === amt && styles.tipChipActive]}
+              onPress={() => setTipAmount(amt)}
+              activeOpacity={0.8}
+            >
+              <Text style={[styles.tipChipTxt, tipAmount === amt && styles.tipChipTxtActive]}>
+                {amt === 0 ? 'No Tip' : `LKR ${amt}`}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </View>
+
       {/* Buttons */}
       <View style={styles.buttonContainer}>
         <TouchableOpacity
@@ -233,6 +253,21 @@ const styles = StyleSheet.create({
   tagActive: { backgroundColor: COLORS.black, borderColor: COLORS.black },
   tagText: { color: COLORS.textSecondary, fontSize: FONT_SIZES.sm, fontWeight: '600' },
   tagTextActive: { color: COLORS.white },
+  tipSection: { gap: 10 },
+  tipRow: { flexDirection: 'row', gap: 8 },
+  tipChip: {
+    flex: 1,
+    height: 44,
+    borderRadius: BORDER_RADIUS.sm,
+    backgroundColor: COLORS.surface,
+    borderWidth: 1,
+    borderColor: COLORS.cardBorder,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  tipChipActive: { backgroundColor: COLORS.primary, borderColor: COLORS.primary },
+  tipChipTxt: { fontSize: FONT_SIZES.xs, fontWeight: '800', color: COLORS.textPrimary },
+  tipChipTxtActive: { color: COLORS.white },
   buttonContainer: { gap: 8, marginTop: SPACING.md },
   submitButton: {
     backgroundColor: COLORS.primary,

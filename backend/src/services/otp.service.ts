@@ -2,10 +2,14 @@ import twilio from 'twilio';
 import nodemailer from 'nodemailer';
 import { logger } from '../utils/logger';
 
-const client = twilio(
-  process.env.TWILIO_ACCOUNT_SID,
-  process.env.TWILIO_AUTH_TOKEN
-);
+const getTwilioClient = () => {
+  const sid = process.env.TWILIO_ACCOUNT_SID;
+  const token = process.env.TWILIO_AUTH_TOKEN;
+  if (!sid || !token || sid.startsWith('ACxxxxxxxxxx')) {
+    return null;
+  }
+  return twilio(sid, token);
+};
 
 const getTransporter = () => {
   const user = process.env.SMTP_USER;
@@ -28,7 +32,8 @@ const getTransporter = () => {
 
 export const sendOTPSMS = async (phone: string, otp: string): Promise<boolean> => {
   try {
-    if (process.env.NODE_ENV === 'development' && (!process.env.TWILIO_ACCOUNT_SID || process.env.TWILIO_ACCOUNT_SID.startsWith('ACxxxxxxxxxx'))) {
+    const client = getTwilioClient();
+    if (!client || process.env.NODE_ENV === 'development') {
       logger.info(`[DEV SMS] OTP for ${phone}: ${otp}`);
       return true;
     }

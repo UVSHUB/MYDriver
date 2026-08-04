@@ -31,6 +31,11 @@ export const bookingApi = {
     const response = await apiClient.put(`/bookings/${id}/cancel`, { reason });
     return response.data.data as Booking;
   },
+
+  validateCoupon: async (code: string, totalAmount: number) => {
+    const response = await apiClient.post('/bookings/validate-coupon', { code, totalAmount });
+    return response.data.data as { code: string; discountAmount: number; finalTotal: number; description: string };
+  },
 };
 
 export const driverApi = {
